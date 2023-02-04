@@ -1,6 +1,6 @@
 version: '3.1'
 services:
-  stats-main:
+  stats-server:
     build: ./statistic/stats-server
     image: statistic_image
     container_name: statistic_container
@@ -37,7 +37,7 @@ services:
       - "8080:8080"
     depends_on:
       - ewm-db
-      - stats-main
+      - stats-server
     environment:
       - DB_HOST=ewm-db
       - DB_PORT=5432
