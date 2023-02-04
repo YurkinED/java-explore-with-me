@@ -10,7 +10,7 @@ import java.util.List;
 public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> {
 
     String query = "SELECT app, uri, count(*) FROM endpoint_hit  " +
-            "WHERE timestamp BETWEEN ?1 AND ?2 "+
+            "WHERE timestamp BETWEEN ?1 AND ?2 " +
             " group by app, uri order by  count(*) desc ";
 
 
@@ -20,8 +20,8 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
     List<EndpointHit> findAllByUniqueIp(LocalDateTime start, LocalDateTime end);
 
     @Query(value = "SELECT app, uri, count(*) FROM endpoint_hit  " +
-            "WHERE timestamp BETWEEN ?1 AND ?2 "+
-            "AND uri IN(?3) "+
+            "WHERE timestamp BETWEEN ?1 AND ?2 " +
+            "AND uri IN(?3) " +
             " group by app, uri order by  count(*) desc ", nativeQuery = true)
     List<EndpointHit> findAllByUrisAndUniqueIp(LocalDateTime start, LocalDateTime end, List<String> uris);
 
