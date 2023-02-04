@@ -45,7 +45,6 @@ public class EndpointHitServiceImpl implements EndpointHitService {
             System.out.println("NUmber 1");
             endpointHits = endpointHitRepository
                     .findAllByTimestampBetweenAndUriIn(formatter.stringToDate(criteria.getStart()),
-                   // .findAllByUrisAndUniqueIp(formatter.stringToDate(criteria.getStart()),
                             formatter.stringToDate(criteria.getEnd()), List.of(criteria.getUris()));
         } else if (criteria.getUris() == null && criteria.isUnique()) {
             System.out.println("NUmber 2");

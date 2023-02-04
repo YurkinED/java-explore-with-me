@@ -14,6 +14,10 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
             " group by app, uri order by  count(*) desc ";
 
 
+    @Query(value = "SELECT max(hit_id) as hit_id, max(ip) as ip, max(timestamp) as timestamp,  app, uri, count(*) FROM endpoint_hit  " +
+            "WHERE timestamp BETWEEN ?1 AND ?2 " +
+            "AND uri IN (?3) " +
+            " group by app, uri order by  count(*) desc ", nativeQuery = true)
     List<EndpointHit> findAllByTimestampBetweenAndUriIn(LocalDateTime start, LocalDateTime end, List<String> uris);
 
     @Query(value = query, nativeQuery = true)
