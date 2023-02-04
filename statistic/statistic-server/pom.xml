@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>stats-server</artifactId>
+    <artifactId>statistic-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
@@ -135,7 +135,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>ru.practicum.StatDataMainClass</mainClass>
+                    <mainClass>ru.practicum.StatisticMainClass</mainClass>
                     <layout>JAR</layout>
                 </configuration>
             </plugin>
