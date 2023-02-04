@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>statistic-main</artifactId>
+    <artifactId>statistic-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
@@ -88,6 +88,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.5.3.Final</version>
         </dependency>
 
         <dependency>
