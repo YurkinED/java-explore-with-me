@@ -21,10 +21,8 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
 
     List<EndpointHit> findAllByTimestampBetween(LocalDateTime start, LocalDateTime end);
 
-    @Query(value = "SELECT DISTINCT e.uri, COALESCE(r.count_hited, 0) AS count_hited " +
-            "FROM endpoint_hit e " +
-            "LEFT JOIN (SELECT uri, COUNT(*) AS count_hited FROM endpoint_hit GROUP BY uri) r ON r.uri = e.uri " +
-            " WHERE e.uri IN ?1",
+    @Query(value = "SELECT uri, COUNT(*) AS count_hited FROM endpoint_hit " +
+            " WHERE uri IN ?1 GROUP BY uri order by COUNT(*) desc",
             nativeQuery = true)
     List<Object[]> getCountHitByUriList(List<String> uris);
 
