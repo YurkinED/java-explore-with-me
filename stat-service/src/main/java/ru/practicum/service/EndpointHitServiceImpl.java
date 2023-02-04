@@ -37,20 +37,26 @@ public class EndpointHitServiceImpl implements EndpointHitService {
 
     @Override
     public List<ViewStatsDto> getStats(StatViewForSpecific criteria) {
+        System.out.println(criteria.toString());
         criteria.setStart(dateDecoder(criteria.getStart()));
         criteria.setEnd(dateDecoder(criteria.getEnd()));
         List<EndpointHit> endpointHits;
         if (criteria.getUris() != null && !criteria.isUnique()) {
+            System.out.println("NUmber 1");
             endpointHits = endpointHitRepository
                     .findAllByTimestampBetweenAndUriIn(formatter.stringToDate(criteria.getStart()),
+                   // .findAllByUrisAndUniqueIp(formatter.stringToDate(criteria.getStart()),
                             formatter.stringToDate(criteria.getEnd()), List.of(criteria.getUris()));
         } else if (criteria.getUris() == null && criteria.isUnique()) {
+            System.out.println("NUmber 2");
             endpointHits = endpointHitRepository.findAllByUniqueIp(formatter.stringToDate(criteria.getStart()),
                     formatter.stringToDate(criteria.getEnd()));
         } else if (criteria.getUris() != null && criteria.isUnique()) {
+            System.out.println("NUmber 3");
             endpointHits = endpointHitRepository.findAllByUrisAndUniqueIp(formatter.stringToDate(criteria.getStart()),
                     formatter.stringToDate(criteria.getEnd()), List.of(criteria.getUris()));
         } else {
+            System.out.println("NUmber 4");
             endpointHits = endpointHitRepository.findAllByTimestampBetween(formatter.stringToDate(criteria.getStart()),
                     formatter.stringToDate(criteria.getEnd()));
         }
@@ -60,6 +66,7 @@ public class EndpointHitServiceImpl implements EndpointHitService {
                 .stream()
                 .map((EndpointHit endpointHit) -> endpointHitMapper
                         .toDto(endpointHit, hitCounts.get(endpointHit.getUri())))
+                .distinct()
                 .sorted(Comparator.comparingInt(ViewStatsDto::getHits).reversed())
                 .collect(Collectors.toList());
 
