@@ -21,7 +21,7 @@ public class StatController {
 
     @PostMapping("/hit")
     public ResponseEntity<EventStatDto> createEvent(@Valid @RequestBody EventStatDto eventStatDto) {
-        log.info("controller:method userController -> createUser");
+        log.info("controller:method userController -> createEvent");
         return ResponseEntity.ok(eventService.createEvent(eventStatDto));
     }
 
@@ -31,7 +31,7 @@ public class StatController {
                                                            @RequestParam List<String> uris
 
     ) {
-        log.info("controller:method  -> createEvent");
+        log.info("controller:method  -> getEvent");
         return ResponseEntity.ok(eventService.getEvents(start, end, uris));
     }
 

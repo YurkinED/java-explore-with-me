@@ -20,10 +20,8 @@ public class EventService {
     private final EventRepository eventRepository;
 
     public EventStatDto createEvent(EventStatDto eventStatDto) {
-
         EventStat eventStat = EventStatMapper.INSTANCE.eventStatDtoToEventStat(eventStatDto);
         eventStat.setCreated(LocalDateTime.now());
-
         return EventStatMapper.INSTANCE.eventStatToEventStatDto(eventRepository
                 .save(eventStat));
     }
@@ -33,8 +31,6 @@ public class EventService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime startDate = LocalDateTime.parse(start, formatter);
         LocalDateTime endDate = LocalDateTime.parse(end, formatter);
-
-
         return eventRepository.findAllStatsWithFilter(uris, startDate, endDate);
     }
 

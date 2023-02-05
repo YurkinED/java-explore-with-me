@@ -213,6 +213,9 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>test</id>
+        </profile>
     </profiles>
 
 </project>
