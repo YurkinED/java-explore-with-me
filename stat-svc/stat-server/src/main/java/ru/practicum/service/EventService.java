@@ -1,7 +1,6 @@
 package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.practicum.EventStatDto;
 import ru.practicum.dao.EventHits;
@@ -10,7 +9,6 @@ import ru.practicum.mappers.EventStatMapper;
 import ru.practicum.model.EventStat;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 
