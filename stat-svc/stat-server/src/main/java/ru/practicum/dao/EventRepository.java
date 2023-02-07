@@ -26,7 +26,7 @@ public interface EventRepository extends JpaRepository<EventStat, Integer> {
             "from EventStat e " +
             " where (e.uri in (:uris) or :uris is null) " +
             " and e.created between :start and :end" +
-            " group by e.uri, e.app "+
+            " group by e.uri, e.app " +
             " order by COUNT(DISTINCT e.ip) DESC")
     List<ViewStats> findDistinctAllStatsWithFilter(@Param("uris") List<String> listUris,
                                                    @Param("start") LocalDateTime start,

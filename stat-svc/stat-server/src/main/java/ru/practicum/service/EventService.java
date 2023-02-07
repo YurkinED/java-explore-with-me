@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.EventStatDto;
 import ru.practicum.ViewStats;
-import ru.practicum.dao.EventHits;
 import ru.practicum.dao.EventRepository;
 import ru.practicum.mappers.EventStatMapper;
 import ru.practicum.model.EventStat;

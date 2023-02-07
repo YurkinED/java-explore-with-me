@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.EventStatDto;
 import ru.practicum.ViewStats;
-import ru.practicum.dao.EventHits;
 import ru.practicum.service.EventService;
 
 import javax.validation.Valid;
