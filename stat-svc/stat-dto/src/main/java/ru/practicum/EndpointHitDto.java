@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 @Jacksonized
 @Data
 public class EndpointHitDto {
-    String app;
-    String uri;
-    String ip;
-    LocalDateTime timestamp;
+    private String app;
+    private String uri;
+    private String ip;
+    private LocalDateTime timestamp;
 }

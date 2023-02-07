@@ -2,6 +2,7 @@ package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.EventStatDto;
@@ -9,10 +10,10 @@ import ru.practicum.dao.EventHits;
 import ru.practicum.service.EventService;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-@RestController
 @Slf4j
 @RequiredArgsConstructor
 public class StatController {
@@ -26,13 +27,14 @@ public class StatController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<Collection<EventHits>> getEvents(@RequestParam String start,
-                                                           @RequestParam String end,
-                                                           @RequestParam List<String> uris
+    public ResponseEntity<Collection<EventHits>> getEvents(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                                           @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+                                                           @RequestParam(required = false) List<String> uris,
+                                                           @RequestParam(required = false,  defaultValue = "false") Boolean uniquee
 
     ) {
         log.info("controller:method  -> getEvent");
-        return ResponseEntity.ok(eventService.getEvents(start, end, uris));
+        return ResponseEntity.ok(eventService.getEvents(start, end, uris, uniquee));
     }
 
 

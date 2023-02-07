@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Table(schema = "public", name = "events")
+@Table(schema = "public", name = "hits")
 public class EventStat {
     @Id
     @SequenceGenerator(name = "pk_sequence", schema = "public", sequenceName = "events_sequence", allocationSize = 1)

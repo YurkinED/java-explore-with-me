@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 @Jacksonized
 @Data
 public class EndpointHitReturnDto {
-    Integer id;
-    String app;
-    String uri;
-    LocalDateTime timestamp;
+    private Integer id;
+    private String app;
+    private String uri;
+    private LocalDateTime timestamp;
 }
