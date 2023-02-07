@@ -3,6 +3,7 @@ package ru.practicum.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.EventStatDto;
+import ru.practicum.ViewStats;
 import ru.practicum.dao.EventHits;
 import ru.practicum.dao.EventRepository;
 import ru.practicum.mappers.EventStatMapper;
@@ -25,9 +26,9 @@ public class EventService {
                 .save(eventStat));
     }
 
-    public Collection<EventHits> getEvents(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean uniquee) {
+    public Collection<ViewStats> getEvents(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean uniquee) {
         if (uniquee) {
-            return eventRepository.findAllStatsWithFilterDistinct(uris, start, end);
+            return eventRepository.findDistinctAllStatsWithFilter(uris, start, end);
         } else {
             return eventRepository.findAllStatsWithFilter(uris, start, end);
         }
