@@ -15,10 +15,10 @@ public class EventsClient extends Client {
     private static final String API_PREFIX = "/hit";
 
 
-    @Value("${statistic-server.uri}")
+
     private String serverUrl;
     @Autowired
-    public EventsClient(String serverUrlMethod, RestTemplateBuilder builder) {
+    public EventsClient(@Value("${statistic-server.uri}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
@@ -27,7 +27,7 @@ public class EventsClient extends Client {
         );
     }
 
-    public ResponseEntity<Object> postStatistic(EndpointHitDto endpointHit) {
+    public ResponseEntity<Object> postStatistic(@Value("${statistic-server.uri}") String serverUrl,EndpointHitDto endpointHit) {
         log.info("Get post statistic {}", endpointHit);
         return post(serverUrl, endpointHit);
     }

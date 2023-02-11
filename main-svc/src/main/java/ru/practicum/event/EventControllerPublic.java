@@ -40,7 +40,7 @@ public class EventControllerPublic {
                                                                @Positive @RequestParam(defaultValue = "10") Integer size,
                                                                HttpServletRequest request) {
         log.info("Get list events from={}, size={}", from, size);
-        eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
+        eventsClient.postStatistic("", new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
         return new ResponseEntity<>(eventMapper.convertCollEventToShortDto(eventService.getEvents(text,
                 categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size)), HttpStatus.OK);
     }
@@ -48,7 +48,7 @@ public class EventControllerPublic {
     @GetMapping("/{eventId}")
     public ResponseEntity<EventFullDto> getEvent(@NotNull @PathVariable Long eventId, HttpServletRequest request) {
         log.info("Get full event by id={}", eventId);
-        eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
+        eventsClient.postStatistic("", new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
         return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.getEvent(eventId)), HttpStatus.OK);
     }
 
