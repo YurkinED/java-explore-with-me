@@ -61,12 +61,7 @@ public class RequestServiceImpl implements RequestService {
             eventService.updateEvent(event);
         }
         User user = userService.getUser(userId);
-        Request request = Request.builder()
-                .requester(user)
-                .status(state)
-                .created(LocalDateTime.now())
-                .event(event)
-                .build();
+        Request request = Request.builder().requester(user).status(state).created(LocalDateTime.now()).event(event).build();
         return requestRepository.save(request);
     }
 
@@ -87,17 +82,15 @@ public class RequestServiceImpl implements RequestService {
         Event event = eventService.findEvent(eventId);
         Collection<Request> requests = getRequestsById(eventRequestStatusUpdateRequest.getRequestIds());
         if ((!event.isRequestModeration()) || (event.getParticipantLimit() == 0)) {
-            requests.forEach(p -> { p.setStatus(TypeStateRequest.CONFIRMED);
-                                requestRepository.save(p);
-                            }
-                    );
+            requests.forEach(p -> {
+                p.setStatus(TypeStateRequest.CONFIRMED);
+                requestRepository.save(p);
+            });
             EventRequestStatusUpdateResult confirmedAll = new EventRequestStatusUpdateResult();
             confirmedAll.setConfirmedRequests(requestMapper.convertColRequestToDto(requests));
             return confirmedAll;
         }
-        long countElementsPending = requests.stream()
-                .filter(p -> p.getStatus().equals(TypeStateRequest.PENDING))
-                .count();
+        long countElementsPending = requests.stream().filter(p -> p.getStatus().equals(TypeStateRequest.PENDING)).count();
         if (countElementsPending != requests.size()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Update state is unavailable. Request hasn't state PENDING");
         }

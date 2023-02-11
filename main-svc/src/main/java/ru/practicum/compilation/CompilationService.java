@@ -8,7 +8,7 @@ import ru.practicum.compilation.model.Compilation;
 
 public interface CompilationService {
 
-    Compilation postCompilation(NewCompilationDto Compilation);
+    Compilation postCompilation(NewCompilationDto compilation);
 
     void deleteCompilation(Long compId);
 
