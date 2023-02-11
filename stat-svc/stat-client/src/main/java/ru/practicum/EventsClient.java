@@ -14,8 +14,11 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 public class EventsClient extends Client {
     private static final String API_PREFIX = "/hit";
 
+
+    @Value("${statistic-server.uri}")
+    private String serverUrl;
     @Autowired
-    public EventsClient(@Value("${statistic-server.uri}") String serverUrl, RestTemplateBuilder builder) {
+    public EventsClient(String serverUrlMethod, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
@@ -26,6 +29,6 @@ public class EventsClient extends Client {
 
     public ResponseEntity<Object> postStatistic(EndpointHitDto endpointHit) {
         log.info("Get post statistic {}", endpointHit);
-        return post("", endpointHit);
+        return post(serverUrl, endpointHit);
     }
 }
