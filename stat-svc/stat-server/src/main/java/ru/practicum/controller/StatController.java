@@ -39,5 +39,10 @@ public class StatController {
         return ResponseEntity.ok(eventService.getEvents(start, end, uris, uniquee));
     }
 
+    @GetMapping
+    public String welcome() {
+        return "login";
+    }
+
 
 }
