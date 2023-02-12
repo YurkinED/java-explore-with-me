@@ -5,13 +5,9 @@ import org.springframework.http.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+@RequiredArgsConstructor
 public class Client {
     protected final RestTemplate rest;
-
-    public Client(RestTemplate rest) {
-        this.rest = rest;
-    }
-
 
     protected <T> ResponseEntity<Object> post(String path, T body) {
         return makeAndSendRequest(HttpMethod.POST, path, body);
