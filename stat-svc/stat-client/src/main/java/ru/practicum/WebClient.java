@@ -2,11 +2,9 @@ package ru.practicum;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import ru.practicum.EndpointHitDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -14,7 +12,6 @@ import java.time.LocalDateTime;
 @Component
 @Slf4j
 public class WebClient {
-
 
 
     private final RestTemplate restTemplate; //= new RestTemplate();
