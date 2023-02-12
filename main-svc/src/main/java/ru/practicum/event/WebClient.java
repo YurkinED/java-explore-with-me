@@ -19,7 +19,6 @@ public class WebClient {
     private final String statUrl;
 
 
-
     public WebClient(RestTemplate restTemplate, @Value("${statistic-server.uri}") String statUrl) {
         this.restTemplate = restTemplate;
         this.statUrl = statUrl;
