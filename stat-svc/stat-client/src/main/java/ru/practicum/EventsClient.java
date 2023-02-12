@@ -19,7 +19,7 @@ public class EventsClient extends Client {
     public EventsClient(@Value("${statistic-server.uri}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl+API_PREFIX))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );
@@ -27,7 +27,6 @@ public class EventsClient extends Client {
 
     public ResponseEntity<Object> postStatistic(EndpointHitDto endpointHit) {
         log.info("Get post statistic {}", endpointHit);
-        log.info("result test={}",get("/test").toString());
         return post("", endpointHit);
     }
 }

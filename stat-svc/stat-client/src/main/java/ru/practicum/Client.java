@@ -13,10 +13,6 @@ public class Client {
         return makeAndSendRequest(HttpMethod.POST, path, body);
     }
 
-    protected <T> ResponseEntity<Object> get(String path) {
-        return makeAndSendRequest(HttpMethod.GET, path, null);
-    }
-
     private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path, T body) {
         HttpEntity<T> requestEntity = new HttpEntity<>(body);
 
