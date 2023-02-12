@@ -28,7 +28,6 @@ public class EventControllerPublic {
     private final EventService eventService;
     private final EventMapper eventMapper;
     private final EventsClient eventsClient;
-
     @Value("${statistic-server.uri}")
     private String serverUrl;
 
@@ -44,8 +43,8 @@ public class EventControllerPublic {
                                                                @Positive @RequestParam(defaultValue = "10") Integer size,
                                                                HttpServletRequest request) {
         log.info("Get list events from={}, size={}", from, size);
-        log.info("serverUrl={}", serverUrl);
-        eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
+        log.info("serverUrl={}", serverUrl+"/hit");
+       // eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
         return new ResponseEntity<>(eventMapper.convertCollEventToShortDto(eventService.getEvents(text,
                 categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size)), HttpStatus.OK);
     }
@@ -53,8 +52,8 @@ public class EventControllerPublic {
     @GetMapping("/{eventId}")
     public ResponseEntity<EventFullDto> getEvent(@NotNull @PathVariable Long eventId, HttpServletRequest request) {
         log.info("Get full event by id={}", eventId);
-        log.info("serverUrl={}", serverUrl);
-        eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
+        log.info("serverUrl={}", serverUrl+"/hit");
+        //eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
         return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.getEvent(eventId)), HttpStatus.OK);
     }
 
