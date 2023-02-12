@@ -24,7 +24,7 @@ public class StatController {
     @PostMapping("/hit")
     public ResponseEntity<EventStatDto> createEvent(@Valid @RequestBody EventStatDto eventStatDto) {
         log.info("controller:method userController -> createEvent");
-        return ResponseEntity.ok(eventService.createEvent(eventStatDto));
+        return ResponseEntity.status(201).body(eventService.createEvent(eventStatDto));
     }
 
     @GetMapping("/stats")
