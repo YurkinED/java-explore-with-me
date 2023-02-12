@@ -1,4 +1,4 @@
-package ru.practicum;
+package ru.practicum.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +12,14 @@ import ru.practicum.EndpointHitDto;
 
 @Service
 @Slf4j
-public class EventsClient extends Client {
+public class EventsClient2 extends Client2 {
     private static final String API_PREFIX = "/hit";
 
     @Autowired
-    public EventsClient(@Value("${statistic-server.uri}") String serverUrl, RestTemplateBuilder builder) {
+    public EventsClient2(@Value("${statistic-server.uri}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:9090/"))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:9090/hit"))
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );
@@ -27,7 +27,6 @@ public class EventsClient extends Client {
 
     public ResponseEntity<Object> postStatistic(EndpointHitDto endpointHit) {
         log.info("Get post statistic {}", endpointHit);
-        log.info("result test={}",get("/test").toString());
-        return post("/hit", endpointHit);
+        return post("", endpointHit);
     }
 }

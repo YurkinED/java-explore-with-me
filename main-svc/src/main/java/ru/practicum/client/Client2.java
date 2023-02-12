@@ -1,24 +1,19 @@
-package ru.practicum;
+package ru.practicum.client;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
-public class Client {
+public class Client2 {
     protected final RestTemplate rest;
 
-    public Client(RestTemplate rest) {
+    public Client2(RestTemplate rest) {
         this.rest = rest;
     }
 
 
     protected <T> ResponseEntity<Object> post(String path, T body) {
         return makeAndSendRequest(HttpMethod.POST, path, body);
-    }
-
-    protected <T> ResponseEntity<Object> get(String path) {
-        return makeAndSendRequest(HttpMethod.GET, path, null);
     }
 
     private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path, T body) {
