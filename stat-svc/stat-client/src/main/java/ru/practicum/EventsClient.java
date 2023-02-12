@@ -24,6 +24,7 @@ public class EventsClient extends Client {
                         .build()
         );
     }
+
     public ResponseEntity<Object> postStatistic(EndpointHitDto endpointHit) {
         log.info("Get post statistic {}", endpointHit);
         return post("", endpointHit);
