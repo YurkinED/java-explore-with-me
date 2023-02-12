@@ -7,8 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.EndpointHitDto;
-import ru.practicum.EventsClient;
+import ru.practicum.WebClient;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.time.LocalDateTime;
 import java.util.Collection;
 
 @RestController
@@ -27,7 +25,8 @@ import java.util.Collection;
 public class EventControllerPublic {
     private final EventService eventService;
     private final EventMapper eventMapper;
-    private final EventsClient eventsClient;
+
+    private final WebClient webClient;
 
     @Value("${statistic-server.uri}")
     private String serverUrl;
@@ -45,7 +44,8 @@ public class EventControllerPublic {
                                                                HttpServletRequest request) {
         log.info("Get list events from={}, size={}", from, size);
         log.info("serverUrl={}", serverUrl + "/hit");
-        eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
+        //eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
+        webClient.addToStatistic("ewm-main-service", request);
         return new ResponseEntity<>(eventMapper.convertCollEventToShortDto(eventService.getEvents(text,
                 categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size)), HttpStatus.OK);
     }
@@ -53,7 +53,8 @@ public class EventControllerPublic {
     @GetMapping("/{eventId}")
     public ResponseEntity<EventFullDto> getEvent(@NotNull @PathVariable Long eventId, HttpServletRequest request) {
         log.info("Get full event by id={}", eventId);
-        eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
+        webClient.addToStatistic("ewm-main-service", request);
+        //eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
         return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.getEvent(eventId)), HttpStatus.OK);
     }
 

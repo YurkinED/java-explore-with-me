@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.EndpointHitDto;
 
 @Service
 @Slf4j
@@ -23,6 +22,7 @@ public class EventsClient extends Client {
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );
+        log.info("serverUrl + API_PREFIX={}",serverUrl + API_PREFIX );
     }
 
     public ResponseEntity<Object> postStatistic(EndpointHitDto endpointHit) {
