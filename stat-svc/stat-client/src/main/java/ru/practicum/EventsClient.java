@@ -8,12 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import ru.practicum.EndpointHitDto;
 
 @Service
 @Slf4j
 public class EventsClient extends Client {
     private static final String API_PREFIX = "/hit";
-
 
     @Autowired
     public EventsClient(@Value("${statistic-server.uri}") String serverUrl, RestTemplateBuilder builder) {
@@ -24,9 +24,8 @@ public class EventsClient extends Client {
                         .build()
         );
     }
-
-    public ResponseEntity<Object> postStatistic(@Value("${statistic-server.uri}") String serverUrl, EndpointHitDto endpointHit) {
+    public ResponseEntity<Object> postStatistic(EndpointHitDto endpointHit) {
         log.info("Get post statistic {}", endpointHit);
-        return post(serverUrl, endpointHit);
+        return post("", endpointHit);
     }
 }

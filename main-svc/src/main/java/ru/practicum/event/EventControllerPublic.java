@@ -2,6 +2,7 @@ package ru.practicum.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +29,9 @@ public class EventControllerPublic {
     private final EventMapper eventMapper;
     private final EventsClient eventsClient;
 
+    @Value("${statistic-server.uri}")
+    private String serverUrl;
+
     @GetMapping
     public ResponseEntity<Collection<EventShortDto>> getEvents(@RequestParam(defaultValue = "") String text,
                                                                @RequestParam(required = false) Long[] categories,
@@ -40,7 +44,8 @@ public class EventControllerPublic {
                                                                @Positive @RequestParam(defaultValue = "10") Integer size,
                                                                HttpServletRequest request) {
         log.info("Get list events from={}, size={}", from, size);
-        eventsClient.postStatistic("", new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
+        log.info("serverUrl={}", serverUrl);
+        eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
         return new ResponseEntity<>(eventMapper.convertCollEventToShortDto(eventService.getEvents(text,
                 categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size)), HttpStatus.OK);
     }
@@ -48,7 +53,8 @@ public class EventControllerPublic {
     @GetMapping("/{eventId}")
     public ResponseEntity<EventFullDto> getEvent(@NotNull @PathVariable Long eventId, HttpServletRequest request) {
         log.info("Get full event by id={}", eventId);
-        eventsClient.postStatistic("", new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
+        log.info("serverUrl={}", serverUrl);
+        eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
         return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.getEvent(eventId)), HttpStatus.OK);
     }
 

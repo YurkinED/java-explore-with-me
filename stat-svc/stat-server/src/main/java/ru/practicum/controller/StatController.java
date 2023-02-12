@@ -17,7 +17,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class StatController {
 
     private final EventService eventService;
@@ -39,7 +39,7 @@ public class StatController {
         return ResponseEntity.ok(eventService.getEvents(start, end, uris, uniquee));
     }
 
-    @GetMapping
+    @GetMapping("/test")
     public String welcome() {
         return "login";
     }
