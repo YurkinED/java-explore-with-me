@@ -9,8 +9,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.request.dto.ParticipationRequestDto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Collection;
 
@@ -30,15 +28,13 @@ public class RequestControllerPrivate {
     }
 
     @PostMapping
-    public ResponseEntity<ParticipationRequestDto> postRequestByUser(@Positive @PathVariable Long userId,
-                                                                     @Positive @RequestParam Long eventId) {
+    public ResponseEntity<ParticipationRequestDto> postRequestByUser(@Positive @PathVariable Long userId, @Positive @RequestParam Long eventId) {
         log.info("Post request by userId={} on eventId={}", userId, eventId);
         return new ResponseEntity<>(requestMapper.convertRequestToDto(requestService.postRequestByUser(userId, eventId)), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{requestId}/cancel")
-    public ResponseEntity<ParticipationRequestDto> cancelRequestByUser(@Positive @PathVariable Long userId,
-                                                                       @Positive @PathVariable Long requestId) {
+    public ResponseEntity<ParticipationRequestDto> cancelRequestByUser(@Positive @PathVariable Long userId, @Positive @PathVariable Long requestId) {
 
         log.info("Patch by userId={} on requestId={}", userId, requestId);
         return new ResponseEntity<>(requestMapper.convertRequestToDto(requestService.cancelRequestByUser(userId, requestId)), HttpStatus.OK);

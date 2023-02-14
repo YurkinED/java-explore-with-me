@@ -10,8 +10,6 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.users.dto.NewUserRequest;
 import ru.practicum.users.model.User;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -20,7 +18,7 @@ public class UserServiceImpl implements UserService {
 
     public Page<User> getUsers(Long[] ids, Integer from, Integer size) {
         Pageable page = PageRequest.of((from / size), size);
-        if (ids == null || ids.length==0){
+        if (ids == null || ids.length == 0) {
             return userRepository.findAll(page);
         }
 

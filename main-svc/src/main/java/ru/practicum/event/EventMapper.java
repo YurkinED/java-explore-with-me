@@ -12,8 +12,7 @@ import ru.practicum.event.model.Location;
 
 import java.util.Collection;
 
-@Mapper(componentModel = "spring", uses = {Location.class, Category.class},
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", uses = {Location.class, Category.class}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface EventMapper {
 
     EventFullDto convertEventToFullDto(Event event);

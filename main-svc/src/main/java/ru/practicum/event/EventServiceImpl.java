@@ -12,7 +12,6 @@ import ru.practicum.event.dto.UpdateEventUserRequest;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.TypeState;
 import ru.practicum.request.RequestRepository;
-import ru.practicum.request.RequestService;
 import ru.practicum.request.model.Request;
 import ru.practicum.support.Validation;
 import ru.practicum.users.UserService;
@@ -26,15 +25,14 @@ import static java.util.stream.Collectors.*;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-   // private final RequestService requestService;
+    // private final RequestService requestService;
 
     private final RequestRepository requestRepository;
     private final EventMapper eventMapper;
     private final UserService userService;
     private final CategoryService categoryService;
 
-    public Page<Event> getEventsAdm(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                    Integer from, Integer size) {
+    public Page<Event> getEventsAdm(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
         Pageable page = PageRequest.of((from / size), size);
         return eventRepository.findAllEvents(users, states, categories, rangeStart, rangeEnd, page);
     }
@@ -76,7 +74,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventMapper.convertNewEventDtoToEvent(newEventDto);
         event.setCreatedOn(LocalDateTime.now());
         event.setInitiator(userService.getUser(userId));
-       // event.setConfirmedRequests(0L);
+        // event.setConfirmedRequests(0L);
         event.setCategory(categoryService.getCategoryById(newEventDto.getCategory()));
         event.setState(TypeState.PENDING);
         return eventRepository.save(event);
@@ -107,8 +105,7 @@ public class EventServiceImpl implements EventService {
     }
 
 
-    public Page<Event> getEvents(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, boolean onlyAvailable,
-                                 String sort, Integer from, Integer size) {
+    public Page<Event> getEvents(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, boolean onlyAvailable, String sort, Integer from, Integer size) {
         Pageable page;
         if (sort == null) {
             page = PageRequest.of((from / size), size);
@@ -125,20 +122,19 @@ public class EventServiceImpl implements EventService {
             }
         }
         if (onlyAvailable) {
-            Collection<Event> event=eventRepository.searchEventsCollection(text, categories, paid, rangeStart, rangeEnd);
+            Collection<Event> event = eventRepository.searchEventsCollection(text, categories, paid, rangeStart, rangeEnd);
             List<Event> list = new ArrayList<>();
             for (Event event1 : event) {
                 list.add(event1);
             }
-            Collection<Request> requests=requestRepository.findByEventIdIn(list);
-            List<Event> event_result=event.stream().filter(
-                    p -> p.getParticipantLimit() >
-                            requests.stream().filter(s -> s.getEvent().getId().equals(p.getId())).count()).collect(toList());
-            return new PageImpl<>(event_result, page, event_result.size());
+            Collection<Request> requests = requestRepository.findByEventIdIn(list);
+            List<Event> eventResult = event.stream().filter(p -> p.getParticipantLimit() > requests.stream().filter(s -> s.getEvent().getId().equals(p.getId())).count()).collect(toList());
+            return new PageImpl<>(eventResult, page, eventResult.size());
         } else {
             return eventRepository.searchEvents(text, categories, paid, rangeStart, rangeEnd, page);
         }
     }
+
     /*
     public Page<Event> getEvents(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, boolean onlyAvailable,
                                  String sort, Integer from, Integer size) {

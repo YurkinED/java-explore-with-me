@@ -10,7 +10,6 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.model.Category;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

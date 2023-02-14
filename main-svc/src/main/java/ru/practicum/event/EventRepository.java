@@ -38,6 +38,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> searchEvents(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
 
     Optional<Event> findByIdAndState(Long eventId, TypeState state);
+
     @Query(value = "select e " +
             "from Event as e " +
             "WHERE (LOWER(e.annotation) like LOWER(concat('%', ?1, '%')) " +

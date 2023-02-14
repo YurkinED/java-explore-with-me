@@ -64,7 +64,6 @@ public class RequestServiceImpl implements RequestService {
             state = TypeStateRequest.PENDING;
         } else {
             state = TypeStateRequest.CONFIRMED;
-         //   event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             eventService.updateEvent(event);
         }
         User user = userService.getUser(userId);
@@ -81,7 +80,6 @@ public class RequestServiceImpl implements RequestService {
         Request request = getRequestByIdAndUser(requestId, userId);
         request.setStatus(TypeStateRequest.CANCELED);
         Event event = request.getEvent();
-      //  event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         eventService.updateEvent(event);
         return requestRepository.save(request);
     }
@@ -114,11 +112,11 @@ public class RequestServiceImpl implements RequestService {
         for (Request request : requests) {
             switch (eventRequestStatusUpdateRequest.getStatus()) {
                 case CONFIRMED:
-                    if (event.getParticipantLimit() - requestRepository.findByEventId(eventId).stream().count()> 0) {
+                    if (event.getParticipantLimit() - requestRepository.findByEventId(eventId).stream().count() > 0) {
                         request.setStatus(TypeStateRequest.CONFIRMED);
                         requestRepository.save(request);
                         confirmed.add(request);
-                       // event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+                        // event.setConfirmedRequests(event.getConfirmedRequests() + 1);
                         break;
                     }
                 case REJECTED:
