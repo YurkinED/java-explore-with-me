@@ -10,16 +10,15 @@ import java.util.Collection;
 @Table(name = "compilations", schema = "public")
 @Getter
 @Setter
-@ToString
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "compilation_id")
     private Collection<Event> events;
     @Column(name = "pinned")

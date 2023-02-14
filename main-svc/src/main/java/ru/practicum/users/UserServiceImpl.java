@@ -20,16 +20,15 @@ public class UserServiceImpl implements UserService {
 
     public Page<User> getUsers(Long[] ids, Integer from, Integer size) {
         Pageable page = PageRequest.of((from / size), size);
+        if (ids == null || ids.length==0){
+            return userRepository.findAll(page);
+        }
+
         return userRepository.findAllByIds(ids, page);
     }
 
     public User getUser(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User by this id not found");
-        }
+        return userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User by this id not found"));
     }
 
     public User postUser(NewUserRequest newUser) {

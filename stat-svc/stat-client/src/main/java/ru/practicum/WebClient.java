@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class WebClient {
 
 
-    private final RestTemplate restTemplate; //= new RestTemplate();
+    private final RestTemplate restTemplate;
     private final String statUrl;
 
 

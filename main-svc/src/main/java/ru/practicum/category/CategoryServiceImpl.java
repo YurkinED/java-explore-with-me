@@ -24,12 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public Category getCategoryById(Long catId) {
-        Optional<Category> category = categoryRepository.findById(catId);
-        if (category.isPresent()) {
-            return category.get();
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This category not found");
-        }
+        return categoryRepository.findById(catId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "This category not found"));
     }
 
     public Category postCategory(NewCategoryDto newCategory) {

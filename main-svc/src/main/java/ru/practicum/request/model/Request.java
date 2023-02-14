@@ -12,9 +12,8 @@ import java.time.LocalDateTime;
 @Table(name = "request", schema = "public")
 @Getter
 @Setter
-@ToString
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 public class Request {
     @Id

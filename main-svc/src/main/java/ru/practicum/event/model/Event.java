@@ -12,9 +12,8 @@ import java.time.LocalDateTime;
 @Table(name = "events", schema = "public")
 @Getter
 @Setter
-@ToString
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 public class Event {
     @Column(name = "annotation")
@@ -24,8 +23,6 @@ public class Event {
     private Category category;
     @Column(name = "compilation_id")
     private Long compilationId;
-    @Column(name = "confirmed_requests")
-    private Long confirmedRequests;
     @Column(name = "created_on")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn;
@@ -41,7 +38,6 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User initiator;
-    @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "lat", column = @Column(name = "lat")),
             @AttributeOverride(name = "lon", column = @Column(name = "lon")),
@@ -61,6 +57,4 @@ public class Event {
     private TypeState state;
     @Column(name = "title")
     private String title;
-    @Column(name = "views")
-    private Long views;
 }

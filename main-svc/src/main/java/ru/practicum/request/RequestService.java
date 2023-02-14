@@ -5,11 +5,14 @@ import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.model.Request;
 
 import java.util.Collection;
+import java.util.Set;
 
 public interface RequestService {
     Collection<Request> getRequestByUser(Long userId);
 
     Request getRequestByIdAndUser(Long requestId, Long userId);
+
+    Collection<Request> getRequestByEventId(Set<Long> eventId);
 
     Request postRequestByUser(Long userId, Long eventId);
 

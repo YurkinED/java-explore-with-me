@@ -3,6 +3,7 @@ package ru.practicum.event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @RestController
@@ -28,6 +30,9 @@ public class EventControllerPublic {
 
     private final WebClient webClient;
 
+    @Value("${app-name}")
+    private String appName;
+
     @Value("${statistic-server.uri}")
     private String serverUrl;
 
@@ -35,8 +40,8 @@ public class EventControllerPublic {
     public ResponseEntity<Collection<EventShortDto>> getEvents(@RequestParam(defaultValue = "") String text,
                                                                @RequestParam(required = false) Long[] categories,
                                                                @RequestParam(required = false) boolean paid,
-                                                               @RequestParam(required = false) String rangeStart,
-                                                               @RequestParam(required = false) String rangeEnd,
+                                                               @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+                                                               @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                                                @RequestParam(defaultValue = "false") boolean onlyAvailable,
                                                                @RequestParam(required = false) String sort,
                                                                @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
@@ -44,8 +49,7 @@ public class EventControllerPublic {
                                                                HttpServletRequest request) {
         log.info("Get list events from={}, size={}", from, size);
         log.info("serverUrl={}", serverUrl + "/hit");
-        //eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
-        webClient.addToStatistic("ewm-main-service", request);
+        webClient.addToStatistic(appName, request);
         return new ResponseEntity<>(eventMapper.convertCollEventToShortDto(eventService.getEvents(text,
                 categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size)), HttpStatus.OK);
     }
@@ -53,8 +57,7 @@ public class EventControllerPublic {
     @GetMapping("/{eventId}")
     public ResponseEntity<EventFullDto> getEvent(@NotNull @PathVariable Long eventId, HttpServletRequest request) {
         log.info("Get full event by id={}", eventId);
-        webClient.addToStatistic("ewm-main-service", request);
-        //eventsClient.postStatistic(new EndpointHitDto("ewm-main-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
+        webClient.addToStatistic(appName, request);
         return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.getEvent(eventId)), HttpStatus.OK);
     }
 

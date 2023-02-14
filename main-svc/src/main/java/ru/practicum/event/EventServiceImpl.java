@@ -1,10 +1,7 @@
 package ru.practicum.event;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,28 +11,32 @@ import ru.practicum.event.dto.UpdateEventAdminRequest;
 import ru.practicum.event.dto.UpdateEventUserRequest;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.TypeState;
+import ru.practicum.request.RequestRepository;
+import ru.practicum.request.RequestService;
+import ru.practicum.request.model.Request;
 import ru.practicum.support.Validation;
 import ru.practicum.users.UserService;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
+   // private final RequestService requestService;
+
+    private final RequestRepository requestRepository;
     private final EventMapper eventMapper;
     private final UserService userService;
     private final CategoryService categoryService;
 
-    public Page<Event> getEventsAdm(Long[] users, TypeState[] states, Long[] categories, String rangeStart, String rangeEnd,
+    public Page<Event> getEventsAdm(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                     Integer from, Integer size) {
         Pageable page = PageRequest.of((from / size), size);
-        LocalDateTime starTime = Validation.validationStartTime(rangeStart);
-        LocalDateTime endTime = Validation.validationEndTime(rangeEnd);
-        return eventRepository.findAllEvents(users, states, categories, starTime, endTime, page);
+        return eventRepository.findAllEvents(users, states, categories, rangeStart, rangeEnd, page);
     }
 
     public Event patchEventsAdm(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
@@ -75,7 +76,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventMapper.convertNewEventDtoToEvent(newEventDto);
         event.setCreatedOn(LocalDateTime.now());
         event.setInitiator(userService.getUser(userId));
-        event.setConfirmedRequests(0L);
+       // event.setConfirmedRequests(0L);
         event.setCategory(categoryService.getCategoryById(newEventDto.getCategory()));
         event.setState(TypeState.PENDING);
         return eventRepository.save(event);
@@ -105,7 +106,8 @@ public class EventServiceImpl implements EventService {
         return eventRepository.save(event);
     }
 
-    public Page<Event> getEvents(String text, Long[] categories, boolean paid, String rangeStart, String rangeEnd, boolean onlyAvailable,
+
+    public Page<Event> getEvents(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, boolean onlyAvailable,
                                  String sort, Integer from, Integer size) {
         Pageable page;
         if (sort == null) {
@@ -122,15 +124,57 @@ public class EventServiceImpl implements EventService {
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такого статуса не существует");
             }
         }
-        LocalDateTime starTime = Validation.validationStartTime(rangeStart);
-        LocalDateTime endTime = Validation.validationEndTime(rangeEnd);
         if (onlyAvailable) {
-            return eventRepository.searchEventsOnlyAvailable(text, categories, paid, starTime, endTime, page);
+            Collection<Event> event=eventRepository.searchEventsCollection(text, categories, paid, rangeStart, rangeEnd);
+            List<Event> list = new ArrayList<>();
+            for (Event event1 : event) {
+                list.add(event1);
+            }
+            Collection<Request> requests=requestRepository.findByEventIdIn(list);
+            List<Event> event_result=event.stream().filter(
+                    p -> p.getParticipantLimit() >
+                            requests.stream().filter(s -> s.getEvent().getId().equals(p.getId())).count()).collect(toList());
+            return new PageImpl<>(event_result, page, event_result.size());
         } else {
-            return eventRepository.searchEvents(text, categories, paid, starTime, endTime, page);
+            return eventRepository.searchEvents(text, categories, paid, rangeStart, rangeEnd, page);
         }
     }
+    /*
+    public Page<Event> getEvents(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, boolean onlyAvailable,
+                                 String sort, Integer from, Integer size) {
+        Pageable page;
+        if (sort == null) {
+            page = PageRequest.of((from / size), size);
+        } else {
+            switch (sort) {
+                case "EVENT_DATE":
+                    page = PageRequest.of((from / size), size, Sort.by(Sort.Direction.DESC, "eventDate"));
+                    break;
+                case "VIEWS":
+                    page = PageRequest.of((from / size), size, Sort.by(Sort.Direction.DESC, "vievs"));
+                    break;
+                default:
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такого статуса не существует");
+            }
+        }
+        if (onlyAvailable) {
 
+
+            //requestRepository
+           //return eventRepository.searchEventsOnlyAvailable(text, categories, paid, rangeStart, rangeEnd, page);
+            Page<Event> event=eventRepository.searchEventsOnlyAvailable(text, categories, paid, rangeStart, rangeEnd, page);
+        //    return event.stream().filter(p -> p.getParticipantLimit() > requestRepository.findByEventIdIn(p.getId()).stream().count());
+          //  Map<Long, Long> requests = new HashMap<>();
+          //for (Request request : requestService.getRequestByEventId(event.stream().collect(groupingBy(Event::getId, toList())).keySet())) {
+          //      requests.merge(request.getEvent().getId(), 1L, Long::sum);
+          //  }
+        //   Page<Event> event2 = (Page<Event>) event.stream().filter(p -> p.getParticipantLimit() > requests.get(p.getId()));
+       //     return event2;
+        } else {
+            return eventRepository.searchEvents(text, categories, paid, rangeStart, rangeEnd, page);
+        }
+    }
+*/
     public Event getEvent(Long eventId) {
         Optional<Event> event = eventRepository.findByIdAndState(eventId, TypeState.PUBLISHED);
         if (event.isPresent()) {

@@ -8,9 +8,8 @@ import javax.persistence.*;
 @Table(name = "categories", schema = "public")
 @Getter
 @Setter
-@ToString
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 public class Category {
     @Id

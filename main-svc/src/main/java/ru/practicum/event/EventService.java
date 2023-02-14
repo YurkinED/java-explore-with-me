@@ -7,12 +7,13 @@ import ru.practicum.event.dto.UpdateEventUserRequest;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.TypeState;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
 
 public interface EventService {
-    Page<Event> getEventsAdm(Long[] users, TypeState[] states, Long[] categories, String rangeStart, String rangeEnd,
+    Page<Event> getEventsAdm(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd,
                              Integer from, Integer size);
 
     Event patchEventsAdm(Long eventId, UpdateEventAdminRequest updateEventAdminRequest);
@@ -25,7 +26,7 @@ public interface EventService {
 
     Event patchEventsByUserPriv(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest);
 
-    Page<Event> getEvents(String text, Long[] categories, boolean paid, String rangeStart, String rangeEnd, boolean onlyAvailable,
+    Page<Event> getEvents(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, boolean onlyAvailable,
                           String sort, Integer from, Integer size);
 
     Event getEvent(Long eventId);

@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ApiError {
     private String message;
     private String reason;
@@ -17,3 +18,4 @@ public class ApiError {
     private List<StackTraceElement> errors;
 
 }
+

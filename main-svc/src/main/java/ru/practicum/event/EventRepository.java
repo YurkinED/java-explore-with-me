@@ -9,6 +9,7 @@ import ru.practicum.event.model.Event;
 import ru.practicum.event.model.TypeState;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Optional;
 
 @Repository
@@ -33,10 +34,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "and e.category.id in ?2 " +
             "and e.paid = ?3 " +
             "and e.eventDate between ?4 and ?5 " +
-            "and (e.participantLimit - e.confirmedRequests) > 0 " +
             "and e.state = 'PUBLISHED'")
-    Page<Event> searchEventsOnlyAvailable(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
+    Page<Event> searchEvents(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
 
+    Optional<Event> findByIdAndState(Long eventId, TypeState state);
     @Query(value = "select e " +
             "from Event as e " +
             "WHERE (LOWER(e.annotation) like LOWER(concat('%', ?1, '%')) " +
@@ -45,9 +46,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "and e.paid = ?3 " +
             "and e.eventDate between ?4 and ?5 " +
             "and e.state = 'PUBLISHED'")
-    Page<Event> searchEvents(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
-
-    Optional<Event> findByIdAndState(Long eventId, TypeState state);
+    Collection<Event> searchEventsCollection(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd);
 
 
 }

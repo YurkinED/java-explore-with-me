@@ -38,6 +38,11 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
+    @Override
+    public Collection<Request> getRequestByEventId(Set<Long> eventId) {
+        return null;
+    }
+
     public Request postRequestByUser(Long userId, Long eventId) {
         if (requestRepository.findByRequesterIdAndEventId(userId, eventId).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This request is repeated");
@@ -49,7 +54,9 @@ public class RequestServiceImpl implements RequestService {
         if (!event.getState().equals(TypeState.PUBLISHED)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is unavailable. Status of this event is't PUBLISHED");
         }
-        if (event.getParticipantLimit() - event.getConfirmedRequests() == 0) {
+
+
+        if (event.getParticipantLimit() - getReqCount(eventId) <= 0) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is unavailable. the maximum number of visitors are reached");
         }
         TypeStateRequest state;
@@ -57,7 +64,7 @@ public class RequestServiceImpl implements RequestService {
             state = TypeStateRequest.PENDING;
         } else {
             state = TypeStateRequest.CONFIRMED;
-            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+         //   event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             eventService.updateEvent(event);
         }
         User user = userService.getUser(userId);
@@ -65,11 +72,16 @@ public class RequestServiceImpl implements RequestService {
         return requestRepository.save(request);
     }
 
+    public int getReqCount(Long eventId) {
+        return requestRepository.countAllByEvent_IdAndStatus(eventId, TypeStateRequest.CONFIRMED);
+    }
+
+
     public Request cancelRequestByUser(Long userId, Long requestId) {
         Request request = getRequestByIdAndUser(requestId, userId);
         request.setStatus(TypeStateRequest.CANCELED);
         Event event = request.getEvent();
-        event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+      //  event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         eventService.updateEvent(event);
         return requestRepository.save(request);
     }
@@ -94,19 +106,19 @@ public class RequestServiceImpl implements RequestService {
         if (countElementsPending != requests.size()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Update state is unavailable. Request hasn't state PENDING");
         }
-        if (event.getParticipantLimit() - event.getConfirmedRequests() == 0) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Update state is unavailable. the maximum number of visitors are reached in event");
+        if (event.getParticipantLimit() - requestRepository.findByEventId(eventId).stream().count() <= 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is unavailable. the maximum number of visitors are reached");
         }
         List<Request> confirmed = new ArrayList<>();
         List<Request> rejected = new ArrayList<>();
         for (Request request : requests) {
             switch (eventRequestStatusUpdateRequest.getStatus()) {
                 case CONFIRMED:
-                    if (event.getParticipantLimit() - event.getConfirmedRequests() > 0) {
+                    if (event.getParticipantLimit() - requestRepository.findByEventId(eventId).stream().count()> 0) {
                         request.setStatus(TypeStateRequest.CONFIRMED);
                         requestRepository.save(request);
                         confirmed.add(request);
-                        event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+                       // event.setConfirmedRequests(event.getConfirmedRequests() + 1);
                         break;
                     }
                 case REJECTED:
@@ -129,5 +141,6 @@ public class RequestServiceImpl implements RequestService {
     private Collection<Request> getRequestsById(Long[] requestIds) {
         return requestRepository.findByIdIn(requestIds);
     }
+
 
 }

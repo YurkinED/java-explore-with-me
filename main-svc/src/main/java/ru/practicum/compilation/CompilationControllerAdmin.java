@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.compilation.dto.CompilationDto;
@@ -13,7 +14,7 @@ import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
-@RestController
+@Controller
 @RequestMapping(path = "/admin/compilations")
 @RequiredArgsConstructor
 @Slf4j
@@ -37,7 +38,7 @@ public class CompilationControllerAdmin {
 
     @PatchMapping("/{compId}")
     public ResponseEntity<CompilationDto> patchCompilation(@Positive @PathVariable Long compId,
-                                                           @RequestBody UpdateCompilationRequest updateCompilationRequest) {
+                                                           @Valid @RequestBody UpdateCompilationRequest updateCompilationRequest) {
         log.info("Patch compilation by id={}", compId);
         CompilationDto compilationDto = compilationMapper.convertCompilationToDto(compilationService.patchCompilation(compId, updateCompilationRequest));
         return new ResponseEntity<>(compilationDto, HttpStatus.OK);
