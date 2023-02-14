@@ -24,6 +24,7 @@ public class ExceptionHandlerMain {
         ApiError apiError = new ApiError(e.getMessage(), e.getReason(), e.getStatus(), Timestamp.from(Instant.now()), Arrays.asList(e.getStackTrace()));
         return ResponseEntity.status(e.getStatus()).body(apiError);
     }
+
     @ExceptionHandler
     public ResponseEntity<ApiError> handleThrowable(final Throwable e) {
         log.error("handleThrowable: {}", e.getMessage());
@@ -36,7 +37,7 @@ public class ExceptionHandlerMain {
                 .reason("Unexpected error")
                 .build();
         //хз как без костылей =(
-       if (e.getMessage().contains("Required request body is missing")){
+        if (e.getMessage().contains("Required request body is missing")) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
                     .body(apiError);
@@ -46,6 +47,7 @@ public class ExceptionHandlerMain {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(apiError);
     }
+
     @ExceptionHandler
     public ResponseEntity<ApiError> methodArgumentNotValidException(final MethodArgumentNotValidException e) {
         log.error("methodArgumentNotValidException: {}", e.getMessage());
