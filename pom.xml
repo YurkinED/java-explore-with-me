@@ -216,5 +216,14 @@
             <id>test</id>
         </profile>
     </profiles>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>1.5.3.Final</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
