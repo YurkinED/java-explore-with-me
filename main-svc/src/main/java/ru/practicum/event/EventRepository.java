@@ -10,6 +10,7 @@ import ru.practicum.event.model.TypeState;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,7 +22,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "and e.state in ?2 " +
             "and e.category.id in ?3 " +
             "and e.eventDate between ?4 and ?5 ")
-    Page<Event> findAllEvents(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
+    List<Event> findAllEvents(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
 
     Page<Event> findAllByInitiatorId(Long userId, Pageable page);
 

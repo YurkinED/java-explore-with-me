@@ -1,9 +1,12 @@
 package ru.practicum;
 
+import io.micrometer.core.lang.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 @RequiredArgsConstructor
 public class Client {

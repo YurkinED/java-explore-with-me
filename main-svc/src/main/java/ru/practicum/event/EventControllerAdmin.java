@@ -35,8 +35,8 @@ public class EventControllerAdmin {
                                                                  @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                                                  @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Get list events from={}, size={}", from, size);
-        return new ResponseEntity<>(eventMapper.convertCollEventToFullDto(eventService.getEventsAdm(users,
-                states, categories, rangeStart, rangeEnd, from, size)), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.getEventsAdm(users,
+                states, categories, rangeStart, rangeEnd, from, size), HttpStatus.OK);
     }
 
     @PatchMapping("/{eventId}")

@@ -1,6 +1,7 @@
 package ru.practicum.event;
 
 import org.springframework.data.domain.Page;
+import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
 import ru.practicum.event.dto.UpdateEventUserRequest;
@@ -13,8 +14,8 @@ import java.util.List;
 
 
 public interface EventService {
-    Page<Event> getEventsAdm(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                             Integer from, Integer size);
+
+    List<EventFullDto> getEventsAdm(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
 
     Event patchEventsAdm(Long eventId, UpdateEventAdminRequest updateEventAdminRequest);
 

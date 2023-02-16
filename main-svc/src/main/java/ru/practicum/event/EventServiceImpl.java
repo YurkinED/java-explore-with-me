@@ -1,12 +1,16 @@
 package ru.practicum.event;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.ViewStats;
+import ru.practicum.WebClient;
 import ru.practicum.category.CategoryService;
+import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
 import ru.practicum.event.dto.UpdateEventUserRequest;
@@ -19,11 +23,13 @@ import ru.practicum.users.UserService;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final RequestRepository requestRepository;
@@ -31,10 +37,22 @@ public class EventServiceImpl implements EventService {
     private final UserService userService;
     private final CategoryService categoryService;
 
-    @Transactional(readOnly = true)
-    public Page<Event> getEventsAdm(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
-        Pageable page = PageRequest.of((from / size), size);
-        return eventRepository.findAllEvents(users, states, categories, rangeStart, rangeEnd, page);
+    private final WebClient webClient;
+
+    @Override
+    public List<EventFullDto> getEventsAdm(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
+        final PageRequest page = PageRequest.of(from, size);
+        List<Event> events = eventRepository.findAllEvents(users, states, categories, rangeStart, rangeEnd, page);
+        List<Long> list = new ArrayList<>();
+        for (Event event1 : events) {
+            list.add(event1.getId());
+        }
+        Collection<Request> requests = requestRepository.findByEventIdIn(list);
+        addViews(events);
+        return events.stream()
+                .map(event -> eventMapper.convertEventToFullDto(event))
+                .peek(x -> x.setConfirmedRequests(new Long(requests.stream().filter(y -> y.getEvent().getId() == x.getId()).count())))
+                .collect(toList());
     }
 
     public Event patchEventsAdm(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
@@ -125,9 +143,9 @@ public class EventServiceImpl implements EventService {
         }
         if (onlyAvailable) {
             Collection<Event> event = eventRepository.searchEventsCollection(text, categories, paid, rangeStart, rangeEnd);
-            List<Event> list = new ArrayList<>();
+            List<Long> list = new ArrayList<>();
             for (Event event1 : event) {
-                list.add(event1);
+                list.add(event1.getId());
             }
             Collection<Request> requests = requestRepository.findByEventIdIn(list);
             List<Event> eventResult = event.stream().filter(p -> p.getParticipantLimit() > requests.stream().filter(s -> s.getEvent().getId().equals(p.getId())).count()).collect(toList());
@@ -164,5 +182,14 @@ public class EventServiceImpl implements EventService {
 
     public void updateEvent(Event eventUpdate) {
         eventRepository.save(eventUpdate);
+    }
+
+    private void addViews(List<Event> events) {
+        Map<Long, Event> eventMap = events.stream().collect(Collectors.toMap(Event::getId, event -> event));
+        log.info(eventMap.toString());
+        List<ViewStats> views = webClient.getViewsAll(eventMap.keySet());
+        webClient.getViewsAll(eventMap.keySet());
+        views.forEach(h -> eventMap.get(Long.parseLong(h.getUri().split("/")[1])).setViews(h.getHits()));
+
     }
 }

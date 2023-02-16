@@ -3,10 +3,12 @@ package ru.practicum.event.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.category.model.Category;
+import ru.practicum.request.model.Request;
 import ru.practicum.users.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "events", schema = "public")
@@ -57,4 +59,8 @@ public class Event {
     private TypeState state;
     @Column(name = "title")
     private String title;
+    @Transient
+    private Long views;
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+    private Set<Request> requests;
 }
