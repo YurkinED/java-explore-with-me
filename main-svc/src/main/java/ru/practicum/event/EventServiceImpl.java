@@ -51,7 +51,7 @@ public class EventServiceImpl implements EventService {
         addViews(events);
         return events.stream()
                 .map(event -> eventMapper.convertEventToFullDto(event))
-                .peek(x -> x.setConfirmedRequests(new Long(requests.stream().filter(y -> y.getEvent().getId() == x.getId()).count())))
+                .peek(x -> x.setConfirmedRequests(new Long(requests.stream().filter(y -> y.getEvent().getId().equals(x.getId())).count())))
                 .collect(toList());
     }
 
