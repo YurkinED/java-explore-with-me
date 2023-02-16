@@ -13,7 +13,6 @@ import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
@@ -55,10 +54,10 @@ public class EventControllerPublic {
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<EventFullDto> getEvent(@NotNull @PathVariable Long eventId, HttpServletRequest request) {
+    public ResponseEntity<EventFullDto> getEvent(@PathVariable Long eventId, HttpServletRequest request) {
         log.info("Get full event by id={}", eventId);
         webClient.addToStatistic(appName, request);
-        return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.getEvent(eventId)), HttpStatus.OK);
+        return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.getPublishedEvent(eventId)), HttpStatus.OK);
     }
 
 

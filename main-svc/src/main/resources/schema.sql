@@ -48,9 +48,7 @@ create table IF NOT EXISTS EVENTS
     DESCRIPTION        CHARACTER VARYING(1000),
     EVENT_DATE         TIMESTAMP                               not null,
     LAT                FLOAT                                   not null,
-    LON                FLOAT                                   not null--,
-  --  VIEWS              BIGINT--,
-   -- CONFIRMED_REQUESTS BIGINT
+    LON                FLOAT                                   not null
 );
 
 create table IF NOT EXISTS REQUEST

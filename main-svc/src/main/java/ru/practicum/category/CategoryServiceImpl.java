@@ -6,9 +6,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.model.Category;
+
 
 
 @Service
@@ -17,11 +19,13 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoriesMapper;
 
+    @Transactional(readOnly = true)
     public Page<Category> getCategories(Integer from, Integer size) {
         Pageable page = PageRequest.of((from / size), size);
         return categoryRepository.findAll(page);
     }
 
+    @Transactional(readOnly = true)
     public Category getCategoryById(Long catId) {
         return categoryRepository.findById(catId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "This category not found"));
     }
@@ -44,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
-    public void deleteCategory(Long catId) {
+   public void deleteCategory(Long catId) {
         try {
             categoryRepository.deleteById(catId);
         } catch (Exception exception) {

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.category.CategoryService;
 import ru.practicum.event.dto.NewEventDto;
@@ -25,20 +26,19 @@ import static java.util.stream.Collectors.*;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    // private final RequestService requestService;
-
     private final RequestRepository requestRepository;
     private final EventMapper eventMapper;
     private final UserService userService;
     private final CategoryService categoryService;
 
+    @Transactional(readOnly = true)
     public Page<Event> getEventsAdm(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
         Pageable page = PageRequest.of((from / size), size);
         return eventRepository.findAllEvents(users, states, categories, rangeStart, rangeEnd, page);
     }
 
     public Event patchEventsAdm(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
-        Event event = findEvent(eventId);
+        Event event = findEventById(eventId);
         Validation.validationTime(event.getEventDate(), 1);
         Validation.validationTime(updateEventAdminRequest.getEventDate(), 1);
         eventMapper.updateEventAdminRequest(updateEventAdminRequest, event);
@@ -59,11 +59,13 @@ public class EventServiceImpl implements EventService {
         return eventRepository.save(event);
     }
 
+    @Transactional(readOnly = true)
     public Page<Event> getEventsByUserPriv(Long userId, Integer from, Integer size) {
         Pageable page = PageRequest.of((from / size), size);
         return eventRepository.findAllByInitiatorId(userId, page);
     }
 
+    @Transactional(readOnly = true)
     public Event getEventByIdPriv(Long userId, Long eventId) {
         return eventRepository.findAllByIdAndInitiatorId(eventId, userId);
     }
@@ -104,6 +106,7 @@ public class EventServiceImpl implements EventService {
     }
 
 
+    @Transactional(readOnly = true)
     public Page<Event> getEvents(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, boolean onlyAvailable, String sort, Integer from, Integer size) {
         Pageable page;
         if (sort == null) {
@@ -134,7 +137,8 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    public Event getEvent(Long eventId) {
+    @Transactional(readOnly = true)
+    public Event getPublishedEvent(Long eventId) {
         Optional<Event> event = eventRepository.findByIdAndState(eventId, TypeState.PUBLISHED);
         if (event.isPresent()) {
             return event.get();
@@ -143,7 +147,8 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    public Event findEvent(Long eventId) {
+    @Transactional(readOnly = true)
+    public Event findEventById(Long eventId) {
         Optional<Event> event = eventRepository.findById(eventId);
         if (event.isPresent()) {
             return event.get();
@@ -152,6 +157,7 @@ public class EventServiceImpl implements EventService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Collection<Event> getEventList(List<Long> eventIds) {
         return eventRepository.findAllById(eventIds);
     }

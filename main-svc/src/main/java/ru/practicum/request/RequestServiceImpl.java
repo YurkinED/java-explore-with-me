@@ -3,6 +3,7 @@ package ru.practicum.request;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.event.EventService;
 import ru.practicum.event.model.Event;
@@ -30,32 +31,23 @@ public class RequestServiceImpl implements RequestService {
     }
 
     public Request getRequestByIdAndUser(Long requestId, Long userId) {
-        Optional<Request> request = requestRepository.findByIdAndRequesterId(requestId, userId);
-        if (request.isPresent()) {
-            return request.get();
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Request is not found");
-        }
-    }
-
-    @Override
-    public Collection<Request> getRequestByEventId(Set<Long> eventId) {
-        return null;
+        return requestRepository.findByIdAndRequesterId(requestId, userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request is not found"));
     }
 
     public Request postRequestByUser(Long userId, Long eventId) {
         if (requestRepository.findByRequesterIdAndEventId(userId, eventId).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This request is repeated");
         }
-        Event event = eventService.findEvent(eventId);
+        Event event = eventService.findEventById(eventId);
         if (Objects.equals(event.getInitiator().getId(), userId)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Initiator of event can't post request");
         }
         if (!event.getState().equals(TypeState.PUBLISHED)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is unavailable. Status of this event is't PUBLISHED");
         }
-
-
+        if (event.getParticipantLimit() == 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is unavailable. the maximum number of visitors are reached");
+        }
         if (event.getParticipantLimit() - getReqCount(eventId) <= 0) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is unavailable. the maximum number of visitors are reached");
         }
@@ -82,14 +74,16 @@ public class RequestServiceImpl implements RequestService {
         Event event = request.getEvent();
         eventService.updateEvent(event);
         return requestRepository.save(request);
+        // return request;
     }
 
+    @Transactional(readOnly = true)
     public Collection<Request> getRequestEventByUser(Long userId, Long eventId) {
         return requestRepository.findByEventIdAndUser(userId, eventId);
     }
 
     public EventRequestStatusUpdateResult patchRequestEventByUser(Long userId, Long eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
-        Event event = eventService.findEvent(eventId);
+        Event event = eventService.findEventById(eventId);
         Collection<Request> requests = getRequestsById(eventRequestStatusUpdateRequest.getRequestIds());
         if ((!event.isRequestModeration()) || (event.getParticipantLimit() == 0)) {
             requests.forEach(p -> {
@@ -104,6 +98,9 @@ public class RequestServiceImpl implements RequestService {
         if (countElementsPending != requests.size()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Update state is unavailable. Request hasn't state PENDING");
         }
+        if (event.getParticipantLimit() == 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is unavailable. the maximum number of visitors are reached");
+        }
         if (event.getParticipantLimit() - requestRepository.findByEventId(eventId).stream().count() <= 0) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is unavailable. the maximum number of visitors are reached");
         }
@@ -116,7 +113,6 @@ public class RequestServiceImpl implements RequestService {
                         request.setStatus(TypeStateRequest.CONFIRMED);
                         requestRepository.save(request);
                         confirmed.add(request);
-                        // event.setConfirmedRequests(event.getConfirmedRequests() + 1);
                         break;
                     }
                 case REJECTED:

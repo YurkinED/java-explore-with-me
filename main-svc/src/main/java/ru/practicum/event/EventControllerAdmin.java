@@ -12,7 +12,6 @@ import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
 import ru.practicum.event.model.TypeState;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
@@ -41,8 +40,8 @@ public class EventControllerAdmin {
     }
 
     @PatchMapping("/{eventId}")
-    public ResponseEntity<EventFullDto> patchEventsAdm(@NotNull @PathVariable Long eventId,
-                                                       @NotNull @RequestBody UpdateEventAdminRequest updateEventAdminRequest) {
+    public ResponseEntity<EventFullDto> patchEventsAdm(@PathVariable Long eventId,
+                                                       @RequestBody UpdateEventAdminRequest updateEventAdminRequest) {
         log.info("Patch event id={}, eventUpd={}", eventId, updateEventAdminRequest);
         return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.patchEventsAdm(eventId, updateEventAdminRequest)), HttpStatus.OK);
     }

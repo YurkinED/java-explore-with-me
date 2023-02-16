@@ -15,7 +15,6 @@ import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.dto.ParticipationRequestDto;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
@@ -32,7 +31,7 @@ public class EventControllerPrivate {
     private final RequestMapper requestMapper;
 
     @GetMapping
-    public ResponseEntity<Collection<EventShortDto>> getEventsByUser(@NotNull @PathVariable Long userId,
+    public ResponseEntity<Collection<EventShortDto>> getEventsByUser(@PathVariable Long userId,
                                                                      @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                                                      @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Get list events by userId={}, from={}, size={}", userId, from, size);
@@ -48,7 +47,7 @@ public class EventControllerPrivate {
 
     @PostMapping
     public ResponseEntity<EventFullDto> postEventsByUser(@Positive @PathVariable Long userId,
-                                                         @Valid @NotNull @RequestBody NewEventDto newEventDto) {
+                                                         @Valid @RequestBody NewEventDto newEventDto) {
         log.info("Post by userId={} new event={}", userId, newEventDto);
         return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.postEventsByUserPriv(userId, newEventDto)), HttpStatus.CREATED);
     }
@@ -56,7 +55,7 @@ public class EventControllerPrivate {
     @PatchMapping("/{eventId}")
     public ResponseEntity<EventFullDto> patchEventsByUser(@Positive @PathVariable Long userId,
                                                           @Positive @PathVariable Long eventId,
-                                                          @NotNull @RequestBody UpdateEventUserRequest updateEventUserRequest) {
+                                                          @RequestBody UpdateEventUserRequest updateEventUserRequest) {
         log.info("Patch event id={} by userId={}, update event={}", eventId, userId, updateEventUserRequest);
         return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.patchEventsByUserPriv(userId, eventId, updateEventUserRequest)), HttpStatus.OK);
     }
@@ -71,7 +70,7 @@ public class EventControllerPrivate {
     @PatchMapping("/{eventId}/requests")
     public ResponseEntity<EventRequestStatusUpdateResult> patchRequestEventByUser(@Positive @PathVariable Long userId,
                                                                                   @Positive @PathVariable Long eventId,
-                                                                                  @NotNull @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
+                                                                                  @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
         log.info("Patch requests userId={}, eventId={}, and eventRequestStatusUpdateRequest={}", userId, eventId, eventRequestStatusUpdateRequest);
 
         return new ResponseEntity<>(requestService.patchRequestEventByUser(userId, eventId, eventRequestStatusUpdateRequest), HttpStatus.OK);

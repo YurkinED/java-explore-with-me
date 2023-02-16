@@ -29,9 +29,9 @@ public interface EventService {
     Page<Event> getEvents(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, boolean onlyAvailable,
                           String sort, Integer from, Integer size);
 
-    Event getEvent(Long eventId);
+    Event getPublishedEvent(Long eventId);
 
-    Event findEvent(Long eventId);
+    Event findEventById(Long eventId);
 
     Collection<Event> getEventList(List<Long> eventIds);
 

@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
@@ -14,7 +15,7 @@ import ru.practicum.event.EventService;
 import ru.practicum.event.model.Event;
 
 import java.util.Collection;
-import java.util.Optional;
+import java.util.HashSet;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +25,11 @@ public class CompilationServiceImpl implements CompilationService {
     private final EventService eventService;
 
     public Compilation postCompilation(NewCompilationDto newCompilationDto) {
-        Collection<Event> events = eventService.getEventList(newCompilationDto.getEvents());
-        Compilation compilation = compilationMapper.convertNewCompilationDtoToCompilation(newCompilationDto);
-        compilation.setEvents(events);
-        return compilationRepository.save(compilation);
+            Collection<Event> events = eventService.getEventList(newCompilationDto.getEvents());
+            Compilation compilation = compilationMapper.convertNewCompilationDtoToCompilation(newCompilationDto);
+            compilation.setEvents(events);
+            compilation.setEvents(new HashSet<>(events));
+            return compilationRepository.save(compilation);
     }
 
     public void deleteCompilation(Long compId) {
@@ -40,10 +42,11 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilationUpd = getCompilation(compId);
         compilationMapper.convertUpdateCompilationRequestToCompilation(updateCompilationRequest, compilationUpd);
         compilationUpd.setEvents(events);
-        eventsUpdate(events, compilationUpd);
+        //eventsUpdate(events, compilationUpd);
         return compilationRepository.save(compilationUpd);
     }
 
+    @Transactional(readOnly = true)
     public Page<Compilation> getCompilations(Boolean pinned, Integer from, Integer size) {
         Pageable page = PageRequest.of((from / size), size);
         if (pinned == null) {
@@ -53,15 +56,11 @@ public class CompilationServiceImpl implements CompilationService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Compilation getCompilation(Long compId) {
-        Optional<Compilation> compilation = compilationRepository.findById(compId);
-        if (compilation.isPresent()) {
-            return compilation.get();
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This compilation isn't found");
-        }
+        return compilationRepository.findById(compId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "This compilation isn't found"));
     }
-
+/*
     private void eventsUpdate(Collection<Event> events, Compilation compilation) {
         if (compilation == null) {
             events.forEach(p -> p.setCompilationId(null));
@@ -69,4 +68,6 @@ public class CompilationServiceImpl implements CompilationService {
             events.forEach(p -> p.setCompilationId(compilation.getId()));
         }
     }
+    */
+
 }
