@@ -1,5 +1,7 @@
 package ru.practicum.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,6 +12,7 @@ import ru.practicum.ViewStats;
 import ru.practicum.service.EventService;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -28,14 +31,19 @@ public class StatController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<Collection<ViewStats>> getEvents(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+    public ResponseEntity<String> getEvents(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                                            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                                            @RequestParam(required = false) List<String> uris,
                                                            @RequestParam(required = false, defaultValue = "false") Boolean uniquee
 
     ) {
         log.info("controller:method  -> getEvent");
-        return ResponseEntity.ok(eventService.getEvents(start, end, uris, uniquee));
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .create();
+        String json = gson.toJson(eventService.getEvents(start, end, uris, uniquee));
+        System.out.println(json);
+        return ResponseEntity.ok(json);
     }
 
     @GetMapping("/test")

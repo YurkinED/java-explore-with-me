@@ -1,5 +1,8 @@
 package ru.practicum;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -12,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,6 +70,27 @@ public class WebClient {
         log.info(eventsId.stream().map(id -> "/events/" + id).collect(Collectors.toList()).toString());
         ResponseEntity<Object> response = get(statUrl + url, parameters);
         return response.hasBody() ? (List<ViewStats>) response.getBody() : List.of();
+    }
+
+    public List<ViewStats> getViewsAll2(Set<Long> eventsId) {
+        String url = "/stats?start={start}&end={end}&unique={unique}";
+
+        Map<String, Object> parameters = Map.of(
+                "start", LocalDateTime.now().minusYears(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                "end", LocalDateTime.now().plusYears(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                "unique", "false"
+        );
+        log.info(eventsId.stream().map(id -> "/events/" + id).collect(Collectors.toList()).toString());
+        ResponseEntity<Object> response = get(statUrl + url, parameters);
+        log.info("response.getBody()={}",response.getBody());
+        log.info("response.getBody()toString={}",response.getBody().toString());
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+
+        List<ViewStats>  viewStats = Arrays.asList(mapper.convertValue(response.getBody(), ViewStats[].class));
+        log.info(" List<ViewStats>  viewStats ={}",viewStats);
+        return response.hasBody() ? viewStats : List.of();
     }
 
 }

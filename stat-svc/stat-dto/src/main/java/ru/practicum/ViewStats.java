@@ -1,12 +1,14 @@
 package ru.practicum;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @RequiredArgsConstructor
 @Getter
+@ToString
+@Builder
+@AllArgsConstructor
 public class ViewStats {
-    private final String uri;
-    private final String app;
-    private final Long hits;
+    private String uri;
+    private String app;
+    private Long hits;
 }

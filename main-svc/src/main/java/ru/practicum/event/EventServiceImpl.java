@@ -1,5 +1,7 @@
 package ru.practicum.event;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -21,6 +23,7 @@ import ru.practicum.request.model.Request;
 import ru.practicum.support.Validation;
 import ru.practicum.users.UserService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -186,10 +189,22 @@ public class EventServiceImpl implements EventService {
 
     private void addViews(List<Event> events) {
         Map<Long, Event> eventMap = events.stream().collect(Collectors.toMap(Event::getId, event -> event));
-        log.info(eventMap.toString());
+//        log.info(eventMap.toString());
         List<ViewStats> views = webClient.getViewsAll(eventMap.keySet());
-        webClient.getViewsAll(eventMap.keySet());
-        views.forEach(h -> eventMap.get(Long.parseLong(h.getUri().split("/")[1])).setViews(h.getHits()));
-
+/*
+        for(ViewStats viewStats: views){
+            log.info("viewStats={}",viewStats);
+        }
+        for (ViewStats viewStats1:webClient.getViewsAll2(eventMap.keySet())) {
+            log.info("viewStats1={}", viewStats1.toString());
+        }
+*/
+        events.stream().forEach(x -> x.setViews(0L));
+        for (ViewStats h : views) {
+            Long id=Long.parseLong(h.getUri().split("/")[2]);
+            if(eventMap.containsKey(id)) {
+                eventMap.get(id).setViews((h.getHits() == null) ? 0 : h.getHits());
+            }
+        }
     }
 }
