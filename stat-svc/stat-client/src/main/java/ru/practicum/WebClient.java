@@ -24,7 +24,7 @@ public class WebClient {
 
     private final RestTemplate restTemplate;
     private final String statUrl;
-    private static final DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     public WebClient(RestTemplate restTemplate, @Value("${statistic-server.uri}") String statUrl) {
@@ -79,14 +79,14 @@ public class WebClient {
         );
         log.info(eventsId.stream().map(id -> "/events/" + id).collect(Collectors.toList()).toString());
         ResponseEntity<Object> response = get(statUrl + url, parameters);
-        log.info("response.getBody()={}",response.getBody());
-        log.info("response.getBody()toString={}",response.getBody().toString());
+        log.info("response.getBody()={}", response.getBody());
+        log.info("response.getBody()toString={}", response.getBody().toString());
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 
-        List<ViewStats>  viewStats = Arrays.asList(mapper.convertValue(response.getBody(), ViewStats[].class));
-        log.info(" List<ViewStats>  viewStats ={}",viewStats);
+        List<ViewStats> viewStats = Arrays.asList(mapper.convertValue(response.getBody(), ViewStats[].class));
+        log.info(" List<ViewStats>  viewStats ={}", viewStats);
         return response.hasBody() ? viewStats : List.of();
     }
 
