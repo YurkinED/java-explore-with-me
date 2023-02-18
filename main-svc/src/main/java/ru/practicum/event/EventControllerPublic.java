@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.WebClient;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.event.dto.CommentDto;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/events")
@@ -58,6 +60,12 @@ public class EventControllerPublic {
         log.info("Get full event by id={}", eventId);
         webClient.addToStatistic(appName, request);
         return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.getPublishedEvent(eventId)), HttpStatus.OK);
+    }
+
+    @GetMapping("/{eventId}/comments")
+
+    public ResponseEntity<List<CommentDto>> findEventByIdWithComments(@PathVariable Long eventId) {
+        return ResponseEntity.ok(eventService.findPublicEventByIdWithComments(eventId));
     }
 
 

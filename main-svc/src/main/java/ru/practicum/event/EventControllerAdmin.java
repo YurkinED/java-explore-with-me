@@ -45,4 +45,12 @@ public class EventControllerAdmin {
         log.info("Patch event id={}, eventUpd={}", eventId, updateEventAdminRequest);
         return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.patchEventsAdm(eventId, updateEventAdminRequest)), HttpStatus.OK);
     }
+
+    @DeleteMapping("/{eventId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long eventId, @PathVariable Long commentId) {
+        eventService.deleteComment(eventId, commentId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
 }

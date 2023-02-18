@@ -10,16 +10,18 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.ViewStats;
 import ru.practicum.WebClient;
 import ru.practicum.category.CategoryService;
-import ru.practicum.event.dto.EventFullDto;
-import ru.practicum.event.dto.NewEventDto;
-import ru.practicum.event.dto.UpdateEventAdminRequest;
-import ru.practicum.event.dto.UpdateEventUserRequest;
+import ru.practicum.event.dto.*;
+import ru.practicum.event.model.Comment;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.TypeState;
 import ru.practicum.request.RequestRepository;
 import ru.practicum.request.model.Request;
+import ru.practicum.support.CommentNotFoundException;
+import ru.practicum.support.UserNotFoundException;
 import ru.practicum.support.Validation;
+import ru.practicum.users.UserRepository;
 import ru.practicum.users.UserService;
+import ru.practicum.users.model.User;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -33,9 +35,16 @@ import static java.util.stream.Collectors.*;
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final RequestRepository requestRepository;
+    private final UserRepository userRepository;
+
     private final EventMapper eventMapper;
     private final UserService userService;
     private final CategoryService categoryService;
+
+    private final CommentRepository commentRepository;
+
+    private final CommentMapper commentMapper;
+
 
     private final WebClient webClient;
 
@@ -196,4 +205,77 @@ public class EventServiceImpl implements EventService {
             }
         }
     }
+
+    private User findUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(
+                        String.format("User with id=%d was not found", id)));
+    }
+
+    @Override
+    public CommentDto addCommentByEventId(Long eventId, Long userId, CommentDto commentDto) {
+
+        User user = findUserById(userId);
+        Event event = findEventById(eventId);
+
+        Comment comment = commentMapper.commentDtoToComment(commentDto);
+
+        comment.setAuthor(user);
+        comment.setEvent(event);
+        comment.setCreated(LocalDateTime.now());
+
+        return commentMapper.commentToCommentDto(commentRepository.save(comment));
+
+    }
+
+    @Override
+    public List<CommentDto> findPublicEventByIdWithComments(Long eventId) {
+        findEventById(eventId);
+        return commentMapper.sourceListToTargetList(findAllCommentsEvent(eventId));
+    }
+
+    @Override
+    public void deleteComment(Long eventId, Long commentId) {
+        Event event = findEventById(eventId);
+        Comment comment = findCommentById(eventId, commentId);
+
+        if (!comment.getEvent().equals(event)) {
+            throw new CommentNotFoundException(
+                    String.format("Comment with id=%d to event with id-%d was not found", commentId, eventId));
+        }
+
+        commentRepository.delete(comment);
+    }
+
+    @Override
+    public CommentDto updateEventComment(CommentNewDto commentNewDto, Long userId, Long eventId, Long commentId) {
+        User user = findUserById(userId);
+        Event event = findEventById(eventId);
+        Comment comment = findCommentById(eventId, commentId);
+        log.info(" Long userId {},{}",userId,user);
+        log.info(" Long eventId {},{}",eventId,event);
+        log.info(" Long commentId {},{}",commentId,comment);
+
+
+        if (!comment.getAuthor().equals(user) || !comment.getEvent().equals(event)) {
+            throw new CommentNotFoundException(
+                    String.format("Comment with id=%d to event with id-%d was not found", commentId, eventId));
+        }
+
+        comment.setText(commentNewDto.getText());
+
+        return commentMapper.commentToCommentDto(commentRepository.save(comment));
+    }
+
+    private Comment findCommentById(Long eventId, Long commentId) {
+        log.error("findCommentById {},{}",eventId,commentId);
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException(
+                        String.format("Comment with id=%d to event with id-%d was not found", commentId, eventId)));
+    }
+
+    private List<Comment> findAllCommentsEvent(Long eventId) {
+        return commentRepository.findAllCommentsEvent(eventId);
+    }
+
 }
