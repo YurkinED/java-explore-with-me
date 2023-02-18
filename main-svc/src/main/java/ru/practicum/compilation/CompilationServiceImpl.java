@@ -15,7 +15,6 @@ import ru.practicum.event.EventService;
 import ru.practicum.event.model.Event;
 
 import java.util.Collection;
-import java.util.HashSet;
 
 @Service
 @RequiredArgsConstructor
