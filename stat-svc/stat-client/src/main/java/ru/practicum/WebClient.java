@@ -14,10 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,6 +24,7 @@ public class WebClient {
 
     private final RestTemplate restTemplate;
     private final String statUrl;
+    private static final DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     public WebClient(RestTemplate restTemplate, @Value("${statistic-server.uri}") String statUrl) {
@@ -61,8 +59,8 @@ public class WebClient {
         String url = "/stats?start={start}&end={end}&uris={uris}&unique={unique}";
 
         Map<String, Object> parameters = Map.of(
-                "start", LocalDateTime.now().minusYears(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                "end", LocalDateTime.now().plusYears(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                "start", LocalDateTime.now().minusYears(5).format(dateTimeFormatter),
+                "end", LocalDateTime.now().plusYears(5).format(dateTimeFormatter),
                 "uris", (eventsId.stream().map(id -> "/events/" + id).collect(Collectors.toList())),
                 "unique", "false"
         );
@@ -75,8 +73,8 @@ public class WebClient {
         String url = "/stats?start={start}&end={end}&unique={unique}";
 
         Map<String, Object> parameters = Map.of(
-                "start", LocalDateTime.now().minusYears(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                "end", LocalDateTime.now().plusYears(5).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                "start", LocalDateTime.now().minusYears(5).format(dateTimeFormatter),
+                "end", LocalDateTime.now().plusYears(5).format(dateTimeFormatter),
                 "unique", "false"
         );
         log.info(eventsId.stream().map(id -> "/events/" + id).collect(Collectors.toList()).toString());

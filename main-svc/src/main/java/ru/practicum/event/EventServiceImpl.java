@@ -47,11 +47,11 @@ public class EventServiceImpl implements EventService {
         for (Event event1 : events) {
             list.add(event1.getId());
         }
-        Collection<Request> requests = requestRepository.findByEventIdIn(list);
+        Map<Long, Long> requests = requestRepository.findByEventIdIn(list).stream().collect(groupingBy(r -> r.getEvent().getId(), counting()));
         addViews(events);
         return events.stream()
-                .map(event -> eventMapper.convertEventToFullDto(event))
-                .peek(x -> x.setConfirmedRequests(new Long(requests.stream().filter(y -> y.getEvent().getId().equals(x.getId())).count())))
+                .map(eventMapper::convertEventToFullDto)
+                .peek(x -> x.setConfirmedRequests(requests.getOrDefault(x.getId(), 0L)))
                 .collect(toList());
     }
 
@@ -188,7 +188,7 @@ public class EventServiceImpl implements EventService {
     private void addViews(List<Event> events) {
         Map<Long, Event> eventMap = events.stream().collect(Collectors.toMap(Event::getId, event -> event));
         List<ViewStats> views = webClient.getViewsAll(eventMap.keySet());
-        events.stream().forEach(x -> x.setViews(0L));
+        events.forEach(x -> x.setViews(0L));
         for (ViewStats h : views) {
             Long id = Long.parseLong(h.getUri().split("/")[2]);
             if (eventMap.containsKey(id)) {

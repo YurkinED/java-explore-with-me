@@ -74,7 +74,6 @@ public class RequestServiceImpl implements RequestService {
         Event event = request.getEvent();
         eventService.updateEvent(event);
         return requestRepository.save(request);
-        // return request;
     }
 
     @Transactional(readOnly = true)
@@ -88,8 +87,8 @@ public class RequestServiceImpl implements RequestService {
         if ((!event.isRequestModeration()) || (event.getParticipantLimit() == 0)) {
             requests.forEach(p -> {
                 p.setStatus(TypeStateRequest.CONFIRMED);
-                requestRepository.save(p);
             });
+            requestRepository.saveAll(requests);
             EventRequestStatusUpdateResult confirmedAll = new EventRequestStatusUpdateResult();
             confirmedAll.setConfirmedRequests(requestMapper.convertColRequestToDto(requests));
             return confirmedAll;
@@ -111,19 +110,19 @@ public class RequestServiceImpl implements RequestService {
                 case CONFIRMED:
                     if (event.getParticipantLimit() - requestRepository.findByEventId(eventId).stream().count() > 0) {
                         request.setStatus(TypeStateRequest.CONFIRMED);
-                        requestRepository.save(request);
                         confirmed.add(request);
                         break;
                     }
+
                 case REJECTED:
                     request.setStatus(TypeStateRequest.REJECTED);
-                    requestRepository.save(request);
                     rejected.add(request);
                     break;
                 default:
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такого статуса не существует");
             }
         }
+        requestRepository.saveAll(requests);
         eventService.updateEvent(event);
         EventRequestStatusUpdateResult requestResult = new EventRequestStatusUpdateResult();
         requestResult.setConfirmedRequests(requestMapper.convertColRequestToDto(confirmed));

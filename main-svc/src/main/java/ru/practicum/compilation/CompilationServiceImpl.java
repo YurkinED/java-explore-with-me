@@ -25,11 +25,10 @@ public class CompilationServiceImpl implements CompilationService {
     private final EventService eventService;
 
     public Compilation postCompilation(NewCompilationDto newCompilationDto) {
-            Collection<Event> events = eventService.getEventList(newCompilationDto.getEvents());
-            Compilation compilation = compilationMapper.convertNewCompilationDtoToCompilation(newCompilationDto);
-            compilation.setEvents(events);
-            compilation.setEvents(new HashSet<>(events));
-            return compilationRepository.save(compilation);
+        Collection<Event> events = eventService.getEventList(newCompilationDto.getEvents());
+        Compilation compilation = compilationMapper.convertNewCompilationDtoToCompilation(newCompilationDto);
+        compilation.setEvents(events);
+        return compilationRepository.save(compilation);
     }
 
     public void deleteCompilation(Long compId) {
@@ -60,14 +59,5 @@ public class CompilationServiceImpl implements CompilationService {
     public Compilation getCompilation(Long compId) {
         return compilationRepository.findById(compId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "This compilation isn't found"));
     }
-/*
-    private void eventsUpdate(Collection<Event> events, Compilation compilation) {
-        if (compilation == null) {
-            events.forEach(p -> p.setCompilationId(null));
-        } else {
-            events.forEach(p -> p.setCompilationId(compilation.getId()));
-        }
-    }
-    */
 
 }
