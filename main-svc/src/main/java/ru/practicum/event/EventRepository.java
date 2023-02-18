@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 @Repository
-public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPredicateExecutor<Event> {
+public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query(value = "select e " +
             "from Event as e " +
@@ -27,10 +27,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPre
             "and e.category.id in ?3 " +
             "and e.eventDate between ?4 and ?5 ")
     List<Event> findAllEvents(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
-
-    @EntityGraph(value = "event-entity-graph")
-    @NonNull
-    Page<Event> findAll(@Nullable Predicate predicate, @Nullable Pageable pageable);
 
     Page<Event> findAllByInitiatorId(Long userId, Pageable page);
 
