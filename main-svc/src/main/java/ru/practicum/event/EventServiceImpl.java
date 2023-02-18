@@ -1,7 +1,5 @@
 package ru.practicum.event;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -201,8 +199,8 @@ public class EventServiceImpl implements EventService {
 */
         events.stream().forEach(x -> x.setViews(0L));
         for (ViewStats h : views) {
-            Long id=Long.parseLong(h.getUri().split("/")[2]);
-            if(eventMap.containsKey(id)) {
+            Long id = Long.parseLong(h.getUri().split("/")[2]);
+            if (eventMap.containsKey(id)) {
                 eventMap.get(id).setViews((h.getHits() == null) ? 0 : h.getHits());
             }
         }
