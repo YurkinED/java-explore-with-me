@@ -2,19 +2,23 @@ package ru.practicum.event;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.TypeState;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 @Repository
-public interface EventRepository extends JpaRepository<Event, Long> {
+public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPredicateExecutor<Event> {
 
     @Query(value = "select e " +
             "from Event as e " +
@@ -23,6 +27,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "and e.category.id in ?3 " +
             "and e.eventDate between ?4 and ?5 ")
     List<Event> findAllEvents(Long[] users, TypeState[] states, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
+
+    @EntityGraph(value = "event-entity-graph")
+    @NonNull
+    Page<Event> findAll(@Nullable Predicate predicate, @Nullable Pageable pageable);
 
     Page<Event> findAllByInitiatorId(Long userId, Pageable page);
 
@@ -48,7 +56,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "and e.paid = ?3 " +
             "and e.eventDate between ?4 and ?5 " +
             "and e.state = 'PUBLISHED'")
-    Collection<Event> searchEventsCollection(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd);
+    List<Event> searchEventsCollection(String text, Long[] categories, boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd);
 
 
 }

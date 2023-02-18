@@ -23,7 +23,6 @@ import ru.practicum.request.model.Request;
 import ru.practicum.support.Validation;
 import ru.practicum.users.UserService;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -145,12 +144,13 @@ public class EventServiceImpl implements EventService {
             }
         }
         if (onlyAvailable) {
-            Collection<Event> event = eventRepository.searchEventsCollection(text, categories, paid, rangeStart, rangeEnd);
+            List<Event> event = eventRepository.searchEventsCollection(text, categories, paid, rangeStart, rangeEnd);
             List<Long> list = new ArrayList<>();
             for (Event event1 : event) {
                 list.add(event1.getId());
             }
             Collection<Request> requests = requestRepository.findByEventIdIn(list);
+            addViews(event);
             List<Event> eventResult = event.stream().filter(p -> p.getParticipantLimit() > requests.stream().filter(s -> s.getEvent().getId().equals(p.getId())).count()).collect(toList());
             return new PageImpl<>(eventResult, page, eventResult.size());
         } else {

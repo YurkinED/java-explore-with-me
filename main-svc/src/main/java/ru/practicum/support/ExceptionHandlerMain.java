@@ -1,7 +1,6 @@
 package ru.practicum.support;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -38,13 +37,13 @@ public class ExceptionHandlerMain {
     @ExceptionHandler
     public ResponseEntity<ApiError> methodArgumentNotValidException(final MethodArgumentNotValidException e) {
         log.error("methodArgumentNotValidException: {}", e.getMessage());
-        final var field = e.getBindingResult().getFieldErrors().stream()
+        final String field = e.getBindingResult().getFieldErrors().stream()
                 .map(err -> "Field: " + err.getField() + ". Error: " + err.getDefaultMessage() + ". Value: " +
                         err.getRejectedValue())
-                .collect(Collectors.toList());
-        final String errors = field.toString().substring(1, field.toString().length() - 1);
+                .collect(Collectors.toList()).toString();
+        final String errors = field.substring(1, field.length() - 1);
         log.warn(errors);
-        final var apiError = ApiError.builder()
+        final ApiError apiError = ApiError.builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .message(errors)
                 .reason("Incorrectly made request.")
@@ -55,12 +54,12 @@ public class ExceptionHandlerMain {
     @ExceptionHandler
     public ResponseEntity<ApiError> missingServletRequestParameterException(final MissingServletRequestParameterException e) {
         log.error("methodArgumentNotValidException2: {}", e.getMessage());
-        final var field = e.getMessage();
-        final String errors = field.substring(1, field.toString().length() - 1);
+        final String field = e.getMessage();
+        final String errors = field.substring(1, field.length() - 1);
         log.warn(errors);
 
 
-        final var apiError = ApiError.builder()
+        final ApiError apiError = ApiError.builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .message(errors)
                 .reason("Incorrectly made request.")
@@ -73,8 +72,8 @@ public class ExceptionHandlerMain {
         log.error("handleThrowable: {}", e.getMessage());
         e.printStackTrace();
         log.error("handleThrowable: {}", e.getStackTrace());
-        final var status = HttpStatus.INTERNAL_SERVER_ERROR;
-        final var apiError = ApiError.builder()
+        final HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        final ApiError apiError = ApiError.builder()
                 .status(status)
                 .message(e.getMessage())
                 .reason("Unexpected error")

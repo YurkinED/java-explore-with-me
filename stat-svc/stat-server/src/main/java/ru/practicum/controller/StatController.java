@@ -8,13 +8,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.EventStatDto;
-import ru.practicum.ViewStats;
 import ru.practicum.service.EventService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 @Slf4j
