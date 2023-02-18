@@ -1,0 +1,50 @@
+package ru.practicum.users;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.users.dto.NewUserRequest;
+import ru.practicum.users.model.User;
+
+@Service
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+
+    @Transactional(readOnly = true)
+    public Page<User> getUsers(Long[] ids, Integer from, Integer size) {
+        Pageable page = PageRequest.of((from / size), size);
+        if (ids == null || ids.length == 0) {
+            return userRepository.findAll(page);
+        }
+
+        return userRepository.findAllByIds(ids, page);
+    }
+
+    @Transactional(readOnly = true)
+    public User getUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User by this id not found"));
+    }
+
+    public User postUser(NewUserRequest newUser) {
+        try {
+            return userRepository.save(userMapper.convertNewUserRequestToUser(newUser));
+        } catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This user is duplicated");
+        }
+    }
+
+    public void deleteUser(Long userId) {
+        try {
+            userRepository.deleteById(userId);
+        } catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This user isn't empty");
+        }
+    }
+}
