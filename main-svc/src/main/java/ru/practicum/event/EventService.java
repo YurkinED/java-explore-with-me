@@ -2,7 +2,6 @@ package ru.practicum.event;
 
 import org.springframework.data.domain.Page;
 import ru.practicum.event.dto.*;
-import ru.practicum.event.dto.CommentDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.TypeState;
 
@@ -36,12 +35,5 @@ public interface EventService {
 
     void updateEvent(Event eventUpdate);
 
-    CommentDto addCommentByEventId(Long eventId, Long userId, CommentDto commentDto);
-
-    List<CommentDto> findPublicEventByIdWithComments(Long eventId);
-
-    void deleteComment(Long eventId, Long commentId);
-
-    CommentDto updateEventComment(CommentNewDto commentNewDto, Long userId, Long eventId, Long commentId);
 
 }

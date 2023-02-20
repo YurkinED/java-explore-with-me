@@ -23,8 +23,9 @@ import java.util.Collection;
 @Slf4j
 @Validated
 public class EventControllerAdmin {
-    private final EventService eventService;
     private final EventMapper eventMapper;
+    private final EventService eventService;
+
 
     @GetMapping
     public ResponseEntity<Collection<EventFullDto>> getEventsAdm(@RequestParam(required = false) Long[] users,
@@ -46,11 +47,6 @@ public class EventControllerAdmin {
         return new ResponseEntity<>(eventMapper.convertEventToFullDto(eventService.patchEventsAdm(eventId, updateEventAdminRequest)), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{eventId}/comments/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long eventId, @PathVariable Long commentId) {
-        eventService.deleteComment(eventId, commentId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 
 
 }

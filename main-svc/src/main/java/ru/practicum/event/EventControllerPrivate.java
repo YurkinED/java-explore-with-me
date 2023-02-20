@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.*;
-import ru.practicum.event.dto.CommentDto;
 import ru.practicum.request.RequestMapper;
 import ru.practicum.request.RequestService;
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
@@ -16,7 +15,6 @@ import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.dto.ParticipationRequestDto;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
@@ -78,21 +76,6 @@ public class EventControllerPrivate {
         return new ResponseEntity<>(requestService.patchRequestEventByUser(userId, eventId, eventRequestStatusUpdateRequest), HttpStatus.OK);
     }
 
-    @PostMapping("/{eventId}/comments")
-    public ResponseEntity<CommentDto> addCommentByEventId(@PathVariable Long eventId, @PathVariable @Min(1) Long userId,
-                                                          @RequestBody CommentDto commentDto) {
 
-        return ResponseEntity.status(201).body(eventService.addCommentByEventId(eventId, userId, commentDto));
-    }
-
-    @PatchMapping("{eventId}/comments/{commentId}")
-    public ResponseEntity<CommentDto> updateEventComment(@RequestBody CommentNewDto commentNewDto,
-                                                         @Positive @PathVariable Long userId,
-                                                         @Positive @PathVariable Long eventId,
-                                                         @Positive @PathVariable Long commentId
-    ) {
-
-        return ResponseEntity.ok(eventService.updateEventComment(commentNewDto, userId, eventId, commentId));
-    }
 
 }
