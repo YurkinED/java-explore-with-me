@@ -11,7 +11,6 @@ import ru.practicum.comments.model.Comment;
 import ru.practicum.event.EventRepository;
 import ru.practicum.comments.model.CommentNewDto;
 import ru.practicum.event.model.Event;
-import ru.practicum.request.RequestRepository;
 import ru.practicum.support.CommentNotFoundException;
 import ru.practicum.support.UserNotFoundException;
 import ru.practicum.users.UserRepository;
