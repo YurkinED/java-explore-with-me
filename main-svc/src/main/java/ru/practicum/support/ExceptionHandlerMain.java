@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -19,16 +20,42 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ExceptionHandlerMain {
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiError> handleUserNotFoundException(UserNotFoundException e) {
+        log.error("handleUserNotFoundException={}",e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiError.builder()
+                        .status(HttpStatus.NOT_FOUND)
+                        .reason("The required object was not found.")
+                        .message(e.getMessage())
+                        .timestamp(Timestamp.valueOf(LocalDateTime.now()))
+                        .build());
+    }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<ApiError> handleCommentNotFoundException(CommentNotFoundException e) {
+        log.error("handleCommentNotFoundException={}",e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.valueOf(204))
+                .body(ApiError.builder()
+                        .status(HttpStatus.valueOf(204))
+                        .reason("Comment not found")
+                        .message(e.getMessage())
+                        .timestamp(Timestamp.valueOf(LocalDateTime.now()))
+                        .build());
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiError> httpMessageNotReadableException(HttpMessageNotReadableException e) {
-        log.error(e.getMessage());
+        log.error("httpMessageNotReadableException={}",e.getMessage());
         ApiError apiError = new ApiError(e.getMessage(), e.getMessage(), HttpStatus.CONFLICT, Timestamp.from(Instant.now()), Arrays.asList(e.getStackTrace()));
         return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError);
     }
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiError> responseStatusException(ResponseStatusException e) {
-        log.error(e.getMessage());
+        log.error("responseStatusException={}",e.getMessage());
         ApiError apiError = new ApiError(e.getMessage(), e.getReason(), e.getStatus(), Timestamp.from(Instant.now()), Arrays.asList(e.getStackTrace()));
         return ResponseEntity.status(e.getStatus()).body(apiError);
     }
@@ -83,6 +110,8 @@ public class ExceptionHandlerMain {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(apiError);
     }
+
+
 }
 
 

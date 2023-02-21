@@ -76,4 +76,6 @@ public class EventControllerPrivate {
         return new ResponseEntity<>(requestService.patchRequestEventByUser(userId, eventId, eventRequestStatusUpdateRequest), HttpStatus.OK);
     }
 
+
+
 }

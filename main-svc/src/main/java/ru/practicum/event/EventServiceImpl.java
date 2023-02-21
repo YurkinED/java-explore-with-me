@@ -10,10 +10,9 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.ViewStats;
 import ru.practicum.WebClient;
 import ru.practicum.category.CategoryService;
-import ru.practicum.event.dto.EventFullDto;
-import ru.practicum.event.dto.NewEventDto;
-import ru.practicum.event.dto.UpdateEventAdminRequest;
-import ru.practicum.event.dto.UpdateEventUserRequest;
+import ru.practicum.comments.CommentMapper;
+import ru.practicum.comments.CommentRepository;
+import ru.practicum.event.dto.*;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.TypeState;
 import ru.practicum.request.RequestRepository;
@@ -33,9 +32,15 @@ import static java.util.stream.Collectors.*;
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final RequestRepository requestRepository;
+
     private final EventMapper eventMapper;
     private final UserService userService;
     private final CategoryService categoryService;
+
+    private final CommentRepository commentRepository;
+
+    private final CommentMapper commentMapper;
+
 
     private final WebClient webClient;
 
@@ -196,4 +201,6 @@ public class EventServiceImpl implements EventService {
             }
         }
     }
+
+
 }
