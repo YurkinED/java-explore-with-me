@@ -23,7 +23,7 @@ public class CommentControllerPrivate {
     private final CommentService commentService;
 
 
-    @PostMapping("/events/{eventId}/comments")
+    @PostMapping("/events/{eventId}")
     public ResponseEntity<CommentNewDto> addCommentByEventId(@PathVariable Long eventId, @PathVariable @Min(1) Long userId,
                                                              @Valid @RequestBody CommentNewDto comment) {
 

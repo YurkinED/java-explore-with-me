@@ -13,7 +13,7 @@ import ru.practicum.comments.model.CommentNewDto;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/comments")
+@RequestMapping(path = "/comment")
 @RequiredArgsConstructor
 @Slf4j
 @Validated

@@ -53,17 +53,17 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentNewDto> findPublicEventByIdWithComments(Long eventId) {
         findEventById(eventId);
-        return commentMapper.sourceListToTargetList(findAllCommentsEvent(eventId));
+        return commentMapper.sourceListToTargetList(commentRepository.findAllCommentsEvent(eventId));
     }
 
     @Override
     public void deleteComment(Long eventId, Long commentId) {
-        Event event = findEventById(eventId);
+        //Event event = findEventById(eventId);
         CommentNewDto comment = findCommentById(eventId, commentId);
 
         if (!comment.getEventId().equals(eventId)) {
             throw new CommentNotFoundException(
-                    String.format("Comment with id=%d to event with id-%d was not found", commentId, eventId));
+                    String.format("Comment with id=%d to event with id-%d was not found, should be {}", commentId, eventId, comment.getEventId()));
         }
 
         commentRepository.deleteById(commentId);

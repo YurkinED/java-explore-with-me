@@ -107,7 +107,7 @@
 					"raw": "{{request_body}}"
 				},
 				"url": {
-					"raw": "{{baseUrl}}/comments/:userId/events/:eventId/comments",
+					"raw": "{{baseUrl}}/comments/:userId/events/:eventId",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -115,8 +115,7 @@
 						"comments",
 						":userId",
 						"events",
-						":eventId",
-						"comments"
+						":eventId"
 					],
 					"variable": [
 						{
@@ -677,12 +676,12 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/comments/:eventId?from=0&size=1000",
+					"raw": "{{baseUrl}}/comment/:eventId?from=0&size=1000",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"comments",
+						"comment",
 						":eventId"
 					],
 					"query": [
@@ -737,7 +736,7 @@
 					"    }",
 					"",
 					"    async addComment(userId, eventId, comment, verbose=null) {",
-					"        return this.post(\"/comments/\" + userId + \"/events/\" + eventId + \"/comments\", comment, \"Ошибка при добавлении нового комментария: \", verbose);",
+					"        return this.post(\"/comments/\" + userId + \"/events/\" + eventId, comment, \"Ошибка при добавлении нового комментария: \", verbose);",
 					"    }",
 					"",
 					"    async findComment(eventId, commentId, verbose=null) {",

@@ -37,9 +37,9 @@ public class ExceptionHandlerMain {
     public ResponseEntity<ApiError> handleCommentNotFoundException(CommentNotFoundException e) {
         log.error("handleCommentNotFoundException={}",e.getMessage());
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.valueOf(204))
                 .body(ApiError.builder()
-                        .status(HttpStatus.NOT_FOUND)
+                        .status(HttpStatus.valueOf(204))
                         .reason("Comment not found")
                         .message(e.getMessage())
                         .timestamp(Timestamp.valueOf(LocalDateTime.now()))
