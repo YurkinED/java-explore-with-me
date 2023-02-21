@@ -1,6 +1,5 @@
 package ru.practicum.comments;
 
-import ru.practicum.comments.model.Comment;
 import ru.practicum.comments.model.CommentNewDto;
 
 import java.util.List;

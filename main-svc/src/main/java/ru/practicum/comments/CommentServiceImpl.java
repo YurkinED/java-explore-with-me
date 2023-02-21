@@ -24,10 +24,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CommentServiceImpl implements CommentService  {
+public class CommentServiceImpl implements CommentService {
 
     private final EventRepository eventRepository;
-    private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
@@ -46,8 +45,8 @@ public class CommentServiceImpl implements CommentService  {
         comment.setEvent(event);
         comment.setCreated(LocalDateTime.now());
         comment.setEditedOn(null);
-        Comment comment2=commentRepository.save(comment);
-        log.info("Comment={}",comment2);
+        Comment comment2 = commentRepository.save(comment);
+        log.info("Comment={}", comment2);
         return commentMapper.commentToCommentNewDto(commentRepository.save(comment2));
 
     }
@@ -76,9 +75,9 @@ public class CommentServiceImpl implements CommentService  {
         User user = findUserById(userId);
         Event event = findEventById(eventId);
         Comment comment = findCommentById2(eventId, commentId);
-        log.info(" Long userId {},{}",userId,user);
-        log.info(" Long eventId {},{}",eventId,event);
-        log.info(" Long commentId {},{}",commentId,comment);
+        log.info(" Long userId {},{}", userId, user);
+        log.info(" Long eventId {},{}", eventId, event);
+        log.info(" Long commentId {},{}", commentId, comment);
 
 
         if (!comment.getAuthor().equals(user) || !comment.getEvent().equals(event)) {
@@ -93,14 +92,14 @@ public class CommentServiceImpl implements CommentService  {
     }
 
     private CommentNewDto findCommentById(Long eventId, Long commentId) {
-        log.error("findCommentById {},{}",eventId,commentId);
+        log.error("findCommentById {},{}", eventId, commentId);
         return commentMapper.commentToCommentNewDto(commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(
                         String.format("1_Comment with id=%d to event with id-%d was not found", commentId, eventId))));
     }
 
     private Comment findCommentById2(Long eventId, Long commentId) {
-        log.error("findCommentById {},{}",eventId,commentId);
+        log.error("findCommentById {},{}", eventId, commentId);
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(
                         String.format("2_Comment with id=%d to event with id-%d was not found", commentId, eventId)));
